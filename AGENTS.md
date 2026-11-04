@@ -10,8 +10,8 @@ repository by swapping a single relative symlink. The name is provisional.
 
 **Current state: MVP implemented.** The module is
 `codefloe.com/zanza00/skills-stack`; `cmd/skills-stack/` is the entry point and
-`internal/` holds the implementation. `list`, `current`, `use` and `status` are
-covered by unit and integration tests. The contract lives in
+`internal/` holds the implementation. `list`, `current`, `init`, `use` and
+`status` are covered by unit and integration tests. The contract lives in
 [`notes/README.md`](notes/README.md); [`README.md`](README.md) is the public
 summary. If they disagree, `notes/README.md` wins.
 
@@ -23,6 +23,9 @@ MVP, in scope:
   `skills-lock.json`;
 - the live link `.agents/skills` in the repository root, pointing to
   `../skill-stacks/<name>/.agents/skills`;
+- `init <stack>`: import an existing `.agents/skills` directory and the
+  optional root `skills-lock.json` into a new stack, then activate it; move,
+  never copy; no merge, no empty stack;
 - `list`, `current`, `use <stack>`, `status`;
 - relative symlinks, atomic replacement via `rename`, state derived only from
   the link target;
@@ -35,6 +38,8 @@ Out of scope for the MVP — do not add without an explicit decision:
   file, no default stack, no shell completion, no Viper. The `golang-cli`
   skill suggests Cobra+Viper; that advice does not apply to this MVP;
 - installing, updating or removing skills (that stays with `npx skills`);
+- creating empty stacks or importing without an existing `.agents/skills`
+  directory;
 - stack composition/layering as a CLI feature (the current flattened trial in
   `skill-stacks/go/` is manual), multiple agents, Windows;
 - commits, history changes, automatic `.gitignore` edits, automatic repair or
@@ -49,6 +54,12 @@ Out of scope for the MVP — do not add without an explicit decision:
 - Never delete recursively, overwrite a real directory or file, or accept
   absolute/unexpected symlink targets.
 - Refuse to create or replace the link unless Git ignores `/.agents/skills`.
+- `init` moves only a real `.agents/skills` directory and a regular root
+  `skills-lock.json`; it must refuse symlinks, files, existing destinations and
+  unsafe intermediate paths.
+- `init` runs every preflight before the first rename, checks tracked paths
+  with `git check-ignore --no-index`, and rolls back in reverse order on
+  failure; it removes only empty directories it created, never recursively.
 - On any error, keep the previous link and remove only the temporary symlink.
 - Validate stack names before building paths: ASCII letter/digit first, then
   letters, digits, `.`, `_`, `-`; reject path separators, `.` and `..`.

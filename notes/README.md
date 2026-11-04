@@ -12,6 +12,7 @@ Permettere a chi lavora in un repository di:
 
 - mantenere più stack di skill versionati in directory separate;
 - vedere quali stack sono disponibili e quale è attivo;
+- convertire un'installazione esistente in uno stack gestito, spostando `.agents/skills` e l'eventuale lock file senza copiarne il contenuto;
 - attivare uno stack tramite un symlink relativo `.agents/skills`;
 - cambiare stack in modo atomico, senza modificare il contenuto degli stack;
 - eseguire le operazioni da comandi non interattivi;
@@ -28,6 +29,7 @@ L'MVP non deve:
 - fare da wrapper ai comandi `npx skills add/update/remove`;
 - validare il contenuto delle skill, il formato del lock file o la compatibilità con un agente;
 - copiare o sincronizzare skill tra directory;
+- creare stack vuoti o inizializzare uno stack senza un'installazione esistente;
 - comporre più stack, gestire layer o skill comuni;
 - gestire contemporaneamente target di agenti diversi;
 - creare commit, modificare la cronologia Git o cambiare automaticamente `.gitignore`;
@@ -88,7 +90,41 @@ La root del repository viene individuata tramite Git. I comandi possono quindi e
 
 ## 4. Flussi operativi
 
-### 4.1 Primo utilizzo
+### 4.1 Primo utilizzo tramite importazione
+
+Se le skill sono già installate in `.agents/skills` e devono diventare uno
+stack gestito, dalla root del repository (o da una sua sottodirectory):
+
+1. Se manca, aggiungere l'esclusione del link a `.gitignore`:
+
+   ```gitignore
+   /.agents/skills
+   ```
+
+2. Importare l'installazione in uno stack:
+
+   ```sh
+   skills-stack init work
+   ```
+
+3. Verificare il risultato:
+
+   ```sh
+   skills-stack current
+   skills-stack status
+   ```
+
+`init` sposta `.agents/skills` in `skill-stacks/work/.agents/skills`, sposta
+l'eventuale `skills-lock.json` della root in
+`skill-stacks/work/skills-lock.json` e crea il link live. Non copia file, non
+crea stack vuoti, non modifica `.gitignore` e non tocca l'indice o la cronologia
+Git. Le skill e il lock file già tracciati da Git risultano spostati: le
+modifiche vanno riviste e committate manualmente.
+
+`init` non è idempotente: se lo stack esiste già il comando fallisce. Su un
+repository già inizializzato si usa `use` per cambiare stack.
+
+### 4.2 Primo utilizzo manuale
 
 Esempio con uno stack chiamato `work`:
 
@@ -127,9 +163,9 @@ Esempio con uno stack chiamato `work`:
 
 6. Riavviare la sessione dell'agente se era già aperta e potrebbe avere caricato le skill precedenti.
 
-La CLI non crea lo stack e non prepara automaticamente `.gitignore`. Questi passaggi restano espliciti nell'MVP.
+In questo flusso manuale la CLI non crea lo stack e non prepara automaticamente `.gitignore`: i passaggi restano espliciti. In alternativa, `init` importa un'installazione già presente (sezione 4.1).
 
-### 4.2 Switch tra stack esistenti
+### 4.3 Switch tra stack esistenti
 
 ```sh
 skills-stack list
@@ -140,7 +176,7 @@ skills-stack current
 
 `use` cambia soltanto il link live. Non copia file, non modifica lock file e non esegue `npx`. Dopo lo switch può essere necessario riavviare la sessione dell'agente.
 
-### 4.3 Aggiunta, aggiornamento o rimozione di skill
+### 4.4 Aggiunta, aggiornamento o rimozione di skill
 
 Per operare su `work`:
 
@@ -167,6 +203,7 @@ Regole del flusso:
 skills-stack
 skills-stack list
 skills-stack current
+skills-stack init <stack>
 skills-stack use <stack>
 skills-stack status
 ```
@@ -235,7 +272,41 @@ skills-stack current
 
 Il comando non deduce lo stato dal lock file, dalla directory corrente, da una configurazione o dall'ultimo comando eseguito.
 
-### 5.4 `use <stack>`
+### 5.4 `init <stack>`
+
+```sh
+skills-stack init work
+```
+
+Converte un'installazione esistente in uno stack gestito.
+
+Prima di spostare qualsiasi file, il comando deve:
+
+1. verificare che il nome sia ammesso e che `.agents` sia una directory reale;
+2. verificare che `.agents/skills` sia una directory reale, non un symlink, un file o un altro tipo di nodo;
+3. verificare che `skill-stacks` sia assente o una directory reale e che `skill-stacks/<stack>` non esista in nessuna forma;
+4. accettare il `skills-lock.json` della root solo se assente o file regolare;
+5. verificare che una regola Git escluda `.agents/skills` anche quando il percorso è già tracciato, usando `git check-ignore --no-index`.
+
+Se tutti i controlli passano, il comando crea le directory necessarie, sposta `.agents/skills` e l'eventuale lock file nelle rispettive destinazioni, quindi crea il link live con la stessa sostituzione atomica di `use`.
+
+Il contenuto delle skill e del lock file non viene letto, validato o riscritto. Il comando non copia, non crea stack vuoti, non fa merge con uno stack esistente e non modifica `.gitignore`, l'indice Git o la cronologia. Gli altri file dentro `.agents` restano al loro posto.
+
+In caso di successo stampa `Stack attivo: <stack>`, i percorsi importati e il promemoria sul riavvio dell'agente; esce con `0`.
+
+Se un'operazione fallisce dopo uno spostamento, il comando annulla in ordine inverso il lock e la directory delle skill, quindi rimuove soltanto le directory vuote create da lui. Non esegue mai cancellazioni ricorsive. Se anche il rollback fallisce, riporta i percorsi da controllare manualmente.
+
+Casi particolari:
+
+- `.agents/skills` assente: nulla da importare, exit code `1`;
+- `.agents/skills` già symlink: il comando rimanda a `use`, exit code `1`;
+- `skill-stacks`, la destinazione o il lock file hanno un tipo non ammesso: exit code `1` prima di ogni spostamento;
+- link live non ignorato da Git: exit code `1` prima di ogni spostamento, con l'indicazione della regola da aggiungere;
+- argomenti mancanti o aggiuntivi: exit code `2`.
+
+`init` non è idempotente: su un repository già inizializzato fallisce e non simula una seconda importazione. Per cambiare stack si usa `use`.
+
+### 5.5 `use <stack>`
 
 ```sh
 skills-stack use work
@@ -259,7 +330,7 @@ Casi particolari:
 - se il link non è ignorato da Git, il comando fallisce prima di crearlo o sostituirlo e indica l'esclusione da configurare;
 - argomenti mancanti o aggiuntivi producono exit code `2`.
 
-### 5.5 `status`
+### 5.6 `status`
 
 ```sh
 skills-stack status
@@ -309,6 +380,18 @@ Dopo tutti i controlli preliminari:
 4. in caso di errore prima della `rename`, eliminare soltanto il proprio symlink temporaneo e conservare il link precedente.
 
 La CLI non deve cancellare ricorsivamente alcun percorso e non deve attraversare il link live per ripulirne il contenuto. Dopo la `rename`, chi accede al percorso vede il vecchio o il nuovo target, non una copia parziale.
+
+### Importazione con `init`
+
+`init` produce lo stesso link finale di `use`, ma prima deve liberare il percorso live, che è una directory reale. L'ordine è:
+
+1. eseguire tutti i controlli preliminari, inclusa l'esclusione Git con `--no-index`;
+2. creare `skill-stacks/`, `skill-stacks/<stack>/` e il relativo `.agents/` solo se assenti e con i tipi attesi;
+3. spostare `.agents/skills` nella destinazione con una `rename`;
+4. spostare l'eventuale `skills-lock.json` della root con una `rename`;
+5. creare il link live con lo stesso algoritmo atomico di `use`.
+
+In caso di errore, le operazioni già completate vengono annullate in ordine inverso. Se il ripristino riesce, vengono rimosse con `os.Remove` soltanto le directory vuote create dal comando; se il ripristino fallisce, non viene rimossa alcuna directory che possa contenere i dati originali e la diagnostica indica i percorsi da controllare. Non viene mai usata una cancellazione ricorsiva.
 
 ### Classificazione del percorso live
 
@@ -361,6 +444,7 @@ I test non devono richiedere l'esecuzione reale di `npx skills`: il package mana
 - costruzione del target relativo e riconoscimento dei soli link gestiti;
 - discovery degli stack validi e non validi;
 - mapping tra stati del link, diagnostiche ed exit code;
+- distinzione tra `IgnoresLiveLink` e il controllo con `--no-index` usato da `init` per i percorsi tracciati;
 - idempotenza di `use` sullo stack già attivo.
 
 ### Test di integrazione su filesystem temporaneo
@@ -368,7 +452,7 @@ I test non devono richiedere l'esecuzione reale di `npx skills`: il package mana
 - primo `use`: creazione del symlink relativo corretto e `current` coerente;
 - switch da stack A a stack B: cambia solo il link; contenuti e lock file di A e B restano invariati;
 - esecuzione da una sottodirectory del repository;
-- `list`, `current`, `use` e `status` nei casi senza stack, senza link, con link valido e con link non valido;
+- `list`, `current`, `init`, `use` e `status` nei casi senza stack, senza link, con link valido e con link non valido;
 - stack richiesto assente o privo di `.agents/skills`: vecchio link invariato;
 - directory reale live con un file sentinella: directory e file restano intatti;
 - file regolare live, `.agents` non directory e `.agents` symlink: nessuna modifica automatica;
@@ -377,7 +461,12 @@ I test non devono richiedere l'esecuzione reale di `npx skills`: il package mana
 - symlink rotto non riconosciuto: rifiuto senza sostituzione;
 - path live non ignorato da Git: rifiuto prima dello switch;
 - errore di creazione o `rename`: conservazione del vecchio link e assenza di temporanei residui;
-- seconda esecuzione di `use` sullo stesso stack: successo senza cambiamenti.
+- seconda esecuzione di `use` sullo stesso stack: successo senza cambiamenti;
+- `init` con directory reale e lock opzionale: spostamento, link corretto e `current`, `list` e `status` coerenti;
+- `init` con skill già tracciate da Git ma coperte da una regola `.gitignore`: importazione consentita;
+- `init` con sorgente assente, symlink, file, destinazione esistente, `skill-stacks` non directory, lock non regolare o link non ignorato: rifiuto prima degli spostamenti, con sentinelle intatte;
+- errore nella creazione del link dopo gli spostamenti: ripristino di skill e lock, rimozione delle sole directory vuote create e assenza di temporanei;
+- seconda esecuzione di `init` sullo stesso stack: fallimento senza modifiche.
 
 ### Test TUI (Fase 2)
 
@@ -396,6 +485,7 @@ La CI dell'MVP deve coprire almeno Linux e macOS. I test di sicurezza devono usa
 ### Fase 1 — MVP
 
 - layout a stack singolo e lock file separati;
+- importazione di un'installazione esistente con `init`;
 - stato rappresentato esclusivamente dal link live;
 - `list`, `current`, `use` e `status`;
 - symlink relativi e switch atomico;

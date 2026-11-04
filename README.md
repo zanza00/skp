@@ -3,10 +3,11 @@
 `skills-stack` è una CLI per selezionare e attivare uno stack di Agent Skills
 all'interno di un repository Git. Il nome è ancora provvisorio.
 
-> **Stato attuale:** l'MVP è implementato. `list`, `current`, `use` e `status`
-> funzionano da un work tree Git, usano un symlink relativo e sostituiscono il
-> link live con una singola `rename`. TUI, completion, supporto Windows e
-> gestione delle skill restano fuori dal perimetro.
+> **Stato attuale:** l'MVP è implementato. `list`, `current`, `init`, `use` e
+> `status` funzionano da un work tree Git, usano un symlink relativo e
+> sostituiscono il link live con una singola `rename`. `init` importa
+> un'installazione esistente senza copiarla. TUI, completion, supporto Windows
+> e gestione delle skill restano fuori dal perimetro.
 
 ## Il problema
 
@@ -67,7 +68,24 @@ sistema: non ci sono dipendenze Go esterne né un package manager interno.
 
 ## Uso rapido
 
-Primo utilizzo, con uno stack chiamato `work`:
+Primo utilizzo, con uno stack chiamato `work`.
+
+Se le skill sono già installate in `.agents/skills`, importale in uno stack
+gestito:
+
+```sh
+# se l'esclusione non è già presente
+printf '/.agents/skills\n' >> .gitignore
+
+skills-stack init work
+skills-stack current
+```
+
+`init` sposta `.agents/skills` e l'eventuale `skills-lock.json` in
+`skill-stacks/work/`, poi crea il link live. Non copia file, non crea stack
+vuoti e non modifica Git: le modifiche vanno riviste e committate manualmente.
+
+Per creare invece lo stack manualmente:
 
 ```sh
 printf '/.agents/skills\n' >> .gitignore
@@ -106,6 +124,7 @@ selezione.
 skills-stack
 skills-stack list
 skills-stack current
+skills-stack init <stack>
 skills-stack use <stack>
 skills-stack status
 ```
@@ -115,6 +134,7 @@ skills-stack status
 | `skills-stack` | Stampa l'uso su stderr ed esce con `2`. |
 | `list` | Elenca gli stack, indicando quello attivo e quelli non selezionabili. |
 | `current` | Stampa solo il nome dello stack attivo, adatto agli script. |
+| `init <stack>` | Importa `.agents/skills` e l'eventuale lock in un nuovo stack, poi lo attiva. |
 | `use <stack>` | Attiva uno stack valido sostituendo soltanto il link live. |
 | `status` | Diagnostica link, target, stack corrente ed esclusione Git, senza riparare nulla. |
 
@@ -150,6 +170,8 @@ rotto o inatteso non vale come «nessuno stack attivo»: `current` restituisce
 
 - stack contenuti direttamente in `skill-stacks/`, con nomi e directory delle
   skill validati prima dello switch;
+- importazione di un'installazione esistente con `init`, senza copiare file,
+  creare stack vuoti o sovrascrivere stack già presenti;
 - symlink relativi, stato derivato dal target e sostituzione atomica tramite
   `rename`;
 - rifiuto di directory reali, file e symlink assoluti o inattesi sul percorso
@@ -161,10 +183,10 @@ rotto o inatteso non vale come «nessuno stack attivo»: `current` restituisce
 
 Restano fuori dall'MVP installazione e aggiornamento delle skill, risoluzione
 delle dipendenze, validazione del loro contenuto, copia o sincronizzazione,
-composizione di più stack, stack predefiniti, file di configurazione, gestione
-simultanea di più agenti, supporto Windows, TUI e completion. La CLI non crea
-commit, non modifica la cronologia Git e non cambia automaticamente
-`.gitignore`.
+creazione di stack vuoti, composizione di più stack, stack predefiniti, file di
+configurazione, gestione simultanea di più agenti, supporto Windows, TUI e
+completion. La CLI non crea commit, non modifica la cronologia Git e non cambia
+automaticamente `.gitignore`.
 
 ## Sviluppo
 
