@@ -27,6 +27,7 @@ MVP, in scope:
   optional root `skills-lock.json` into a new stack, then activate it; move,
   never copy; no merge, no empty stack;
 - `list`, `current`, `use <stack>`, `status`;
+- `--version` printing the build commit and commit date;
 - relative symlinks, atomic replacement via `rename`, state derived only from
   the link target;
 - Linux and macOS.
@@ -135,6 +136,8 @@ Commit `skill-stacks/` and its lock file; never commit the live link.
   (including no arguments), `3` `current` with no live link. `-h`/`--help`
   exits `0`.
 - `current` prints only the stack name on stdout; diagnostics go to stderr.
+- `--version` prints the commit and commit date from the Go build's VCS
+  metadata on stdout and exits `0`, without opening a workspace.
 - Tests: table-driven with named subtests; filesystem tests use `t.TempDir()`
   and sentinel files; no real `npx skills`; run `go test -race ./...`; CI must
   cover Linux and macOS.

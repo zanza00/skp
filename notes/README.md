@@ -206,6 +206,7 @@ skills-stack current
 skills-stack init <stack>
 skills-stack use <stack>
 skills-stack status
+skills-stack --version
 ```
 
 - I comandi non interattivi non chiedono conferme e non leggono la scelta da stdin.
@@ -233,7 +234,11 @@ skills-stack
 
 Senza argomenti il comando stampa l'uso su stderr ed esce con codice `2`; non
 sceglie alcuno stack. `-h` e `--help` stampano l'aiuto su stdout ed escono con
-codice `0`.
+codice `0`. `--version` stampa su stdout il nome del binario, il commit Git e la
+data del commit registrati al momento della build, quindi esce con `0`. I
+metadati provengono dalle informazioni VCS incorporate dal toolchain Go; se il
+binario è stato compilato fuori da un work tree Git, commit e data risultano
+`sconosciuto` e `sconosciuta`. `--version` non accetta altri argomenti.
 
 La TUI interattiva è fuori dall'MVP: la progettazione è conservata nella
 sezione 6 per la Fase 2.
@@ -445,6 +450,7 @@ I test non devono richiedere l'esecuzione reale di `npx skills`: il package mana
 - discovery degli stack validi e non validi;
 - mapping tra stati del link, diagnostiche ed exit code;
 - distinzione tra `IgnoresLiveLink` e il controllo con `--no-index` usato da `init` per i percorsi tracciati;
+- lettura dei metadati VCS e fallback di `--version` quando commit o data non sono disponibili;
 - idempotenza di `use` sullo stack già attivo.
 
 ### Test di integrazione su filesystem temporaneo

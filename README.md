@@ -127,6 +127,7 @@ skills-stack current
 skills-stack init <stack>
 skills-stack use <stack>
 skills-stack status
+skills-stack --version
 ```
 
 | Comando | Comportamento |
@@ -139,7 +140,9 @@ skills-stack status
 | `status` | Diagnostica link, target, stack corrente ed esclusione Git, senza riparare nulla. |
 
 `-h` e `--help` stampano l'aiuto su stdout ed escono con `0`. I comandi non
-interattivi non chiedono conferme e non leggono da stdin.
+interattivi non chiedono conferme e non leggono da stdin. `--version` stampa il
+commit e la data del commit incorporati al momento della build, quindi esce con
+`0`.
 
 ### Esempio di `list`
 
