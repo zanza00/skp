@@ -58,6 +58,15 @@ func Run(dir string, args []string, stdout, stderr io.Writer) int {
 			return code
 		}
 		return runStatus(ws, stdout, stderr)
+	case "init":
+		if len(args) != 2 {
+			return usageError(stderr, "uso: skills-stack init <stack>")
+		}
+		ws, code := openWorkspace(dir, stderr)
+		if ws == nil {
+			return code
+		}
+		return runInit(ws, args[1], stdout, stderr)
 	case "use":
 		if len(args) != 2 {
 			return usageError(stderr, "uso: skills-stack use <stack>")
@@ -95,6 +104,7 @@ func printUsage(w io.Writer) {
 	fmt.Fprint(w, `Uso:
   skills-stack list
   skills-stack current
+  skills-stack init <stack>
   skills-stack use <stack>
   skills-stack status
 
@@ -108,6 +118,7 @@ func printHelp(w io.Writer) {
 Uso:
   skills-stack list
   skills-stack current
+  skills-stack init <stack>
   skills-stack use <stack>
   skills-stack status
   skills-stack -h | --help
@@ -115,6 +126,7 @@ Uso:
 Comandi:
   list       elenca gli stack e indica quello attivo
   current    stampa il nome dello stack attivo
+  init       importa .agents/skills in un nuovo stack e lo attiva
   use        attiva uno stack sostituendo il link .agents/skills
   status     mostra una diagnostica senza modificare nulla
 

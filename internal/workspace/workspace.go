@@ -80,6 +80,17 @@ func (w *Workspace) StackSkillsDir(name string) string {
 	return filepath.Join(w.StackDir(name), ".agents", "skills")
 }
 
+// LockPath is the optional lock file in the repository root, imported by init.
+func (w *Workspace) LockPath() string {
+	return filepath.Join(w.Root, "skills-lock.json")
+}
+
+// StackLockPath is the lock file of a stack. The caller must validate name
+// first.
+func (w *Workspace) StackLockPath(name string) string {
+	return filepath.Join(w.StackDir(name), "skills-lock.json")
+}
+
 // DirState classifies one of the layout directories without following
 // symlinks.
 type DirState int
@@ -109,8 +120,25 @@ func (w *Workspace) AgentsDirState() (DirState, error) {
 // IgnoresLiveLink reports whether Git excludes .agents/skills. A tracked live
 // link is reported as not ignored, because it must not be committed.
 func (w *Workspace) IgnoresLiveLink() (bool, error) {
+	return w.ignoresLiveLink(false)
+}
+
+// IgnoresLiveLinkIncludingTracked reports whether a Git ignore rule matches
+// .agents/skills even when the path is already tracked. init uses it to import
+// a real directory that may have been committed before the switch.
+func (w *Workspace) IgnoresLiveLinkIncludingTracked() (bool, error) {
+	return w.ignoresLiveLink(true)
+}
+
+func (w *Workspace) ignoresLiveLink(noIndex bool) (bool, error) {
+	args := []string{"-C", w.Root, "check-ignore", "-q"}
+	if noIndex {
+		args = append(args, "--no-index")
+	}
+	args = append(args, "--", ".agents/skills")
+
 	var stderr bytes.Buffer
-	cmd := exec.Command("git", "-C", w.Root, "check-ignore", "-q", "--", ".agents/skills")
+	cmd := exec.Command("git", args...)
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err == nil {

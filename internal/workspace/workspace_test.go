@@ -110,6 +110,64 @@ func TestIgnoresLiveLink(t *testing.T) {
 	})
 }
 
+func TestIgnoresLiveLinkIncludingTracked(t *testing.T) {
+	t.Parallel()
+
+	t.Run("tracked path with ignore rule", func(t *testing.T) {
+		t.Parallel()
+		root := newGitRepo(t)
+		writeFile(t, filepath.Join(root, ".gitignore"), "/.agents/skills\n")
+		writeFile(t, filepath.Join(root, ".agents", "skills", "SKILL.md"), "# work\n")
+		runGit(t, root, "add", "-f", ".agents/skills")
+
+		ws := mustOpen(t, root)
+		ignored, err := ws.IgnoresLiveLink()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ignored {
+			t.Fatal("IgnoresLiveLink() = true for a tracked path, want false")
+		}
+
+		ignored, err = ws.IgnoresLiveLinkIncludingTracked()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !ignored {
+			t.Fatal("IgnoresLiveLinkIncludingTracked() = false, want true")
+		}
+	})
+
+	t.Run("untracked path with ignore rule", func(t *testing.T) {
+		t.Parallel()
+		root := newGitRepo(t)
+		writeFile(t, filepath.Join(root, ".gitignore"), "/.agents/skills\n")
+
+		ws := mustOpen(t, root)
+		ignored, err := ws.IgnoresLiveLinkIncludingTracked()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !ignored {
+			t.Fatal("IgnoresLiveLinkIncludingTracked() = false, want true")
+		}
+	})
+
+	t.Run("no ignore rule", func(t *testing.T) {
+		t.Parallel()
+		root := newGitRepo(t)
+
+		ws := mustOpen(t, root)
+		ignored, err := ws.IgnoresLiveLinkIncludingTracked()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ignored {
+			t.Fatal("IgnoresLiveLinkIncludingTracked() = true, want false")
+		}
+	})
+}
+
 func TestAgentsDirState(t *testing.T) {
 	t.Parallel()
 
@@ -187,6 +245,8 @@ func TestPaths(t *testing.T) {
 		{name: "stacks", got: ws.StacksDir(), want: "/repo/skill-stacks"},
 		{name: "stack", got: ws.StackDir("work"), want: "/repo/skill-stacks/work"},
 		{name: "stack skills", got: ws.StackSkillsDir("work"), want: "/repo/skill-stacks/work/.agents/skills"},
+		{name: "root lock", got: ws.LockPath(), want: "/repo/skills-lock.json"},
+		{name: "stack lock", got: ws.StackLockPath("work"), want: "/repo/skill-stacks/work/skills-lock.json"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
