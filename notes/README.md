@@ -14,7 +14,7 @@ Permettere a chi lavora in un repository di:
 - vedere quali stack sono disponibili e quale è attivo;
 - attivare uno stack tramite un symlink relativo `.agents/skills`;
 - cambiare stack in modo atomico, senza modificare il contenuto degli stack;
-- eseguire le stesse operazioni da TUI oppure da comandi non interattivi;
+- eseguire le operazioni da comandi non interattivi;
 - rilevare stati ambigui o non sicuri prima di sostituire il link attivo.
 
 La CLI gestisce esclusivamente la selezione dello stack. Le skill e i relativi lock file restano gestiti dagli strumenti già esistenti.
@@ -33,6 +33,7 @@ L'MVP non deve:
 - creare commit, modificare la cronologia Git o cambiare automaticamente `.gitignore`;
 - riavviare automaticamente l'agente;
 - supportare Windows;
+- fornire una TUI interattiva nell'MVP (rinviata alla Fase 2);
 - introdurre un file di configurazione o uno stack predefinito.
 
 ## 2. Terminologia
@@ -139,8 +140,6 @@ skills-stack current
 
 `use` cambia soltanto il link live. Non copia file, non modifica lock file e non esegue `npx`. Dopo lo switch può essere necessario riavviare la sessione dell'agente.
 
-In alternativa, `skills-stack` senza argomenti apre la TUI e permette di scegliere lo stack.
-
 ### 4.3 Aggiunta, aggiornamento o rimozione di skill
 
 Per operare su `work`:
@@ -175,29 +174,32 @@ skills-stack status
 - I comandi non interattivi non chiedono conferme e non leggono la scelta da stdin.
 - I risultati destinati a script vanno su stdout; gli errori vanno su stderr.
 - `current` è il comando consigliato per gli script: in caso di successo stampa soltanto il nome dello stack seguito da newline.
-- Gli output di `list`, `status` e della TUI sono destinati alle persone e possono essere migliorati senza cambiare il modello di stato.
+- Gli output di `list` e `status` sono destinati alle persone e possono essere migliorati senza cambiare il modello di stato.
 - Un errore non deve lasciare un link temporaneo né modificare uno stack.
 
 ### Exit code
 
 | Codice | Significato |
 | --- | --- |
-| `0` | Operazione completata; per la TUI include anche l'uscita esplicita senza switch. |
+| `0` | Operazione completata. |
 | `1` | Errore operativo o stato non sicuro: stack assente/non valido, conflitto sul link, target inatteso, errore Git o filesystem. |
-| `2` | Errore d'uso: comando o argomenti non validi; include la TUI richiesta senza terminale interattivo. |
+| `2` | Errore d'uso: comando o argomenti non validi; include l'invocazione senza argomenti. |
 | `3` | Solo per `current`: nessuno stack è attivo perché il link live non esiste. |
 
 Un link presente ma rotto o inatteso non equivale a «nessuno stack attivo»: `current` restituisce `1`, perché è uno stato da diagnosticare.
 
-### 5.1 Nessun argomento: TUI
+### 5.1 Nessun argomento: aiuto
 
 ```sh
 skills-stack
 ```
 
-Apre la TUI sugli stack presenti nel repository. La selezione confermata esegue lo stesso switch di `use <stack>` e rispetta le stesse regole di sicurezza.
+Senza argomenti il comando stampa l'uso su stderr ed esce con codice `2`; non
+sceglie alcuno stack. `-h` e `--help` stampano l'aiuto su stdout ed escono con
+codice `0`.
 
-Se stdin o stdout non sono terminali interattivi, il comando non sceglie uno stack automaticamente: stampa un errore che suggerisce `list` e `use <stack>` ed esce con codice `2`.
+La TUI interattiva è fuori dall'MVP: la progettazione è conservata nella
+sezione 6 per la Fase 2.
 
 ### 5.2 `list`
 
@@ -278,9 +280,10 @@ Mostra una diagnostica leggibile di:
 
 La generazione di completion shell non fa parte dell'MVP: non è necessaria per i flussi principali. Può essere aggiunta in una fase successiva, dopo aver stabilizzato nomi e sintassi dei comandi.
 
-## 6. Comportamento essenziale della TUI MVP
+## 6. Comportamento essenziale della TUI (Fase 2)
 
-La TUI deve soltanto selezionare e attivare uno stack:
+Questa sezione è fuori dall'MVP e descrive la TUI prevista per la fase
+successiva. La TUI deve soltanto selezionare e attivare uno stack:
 
 - mostra gli stessi stack e stati di `list`, evidenziando quello corrente;
 - permette di spostarsi con le frecce su/giù;
@@ -376,7 +379,9 @@ I test non devono richiedere l'esecuzione reale di `npx skills`: il package mana
 - errore di creazione o `rename`: conservazione del vecchio link e assenza di temporanei residui;
 - seconda esecuzione di `use` sullo stesso stack: successo senza cambiamenti.
 
-### Test TUI
+### Test TUI (Fase 2)
+
+Questi test non fanno parte della suite MVP.
 
 - avvio senza argomenti in un pseudo-terminale;
 - navigazione, conferma e annullamento senza switch;
@@ -392,7 +397,6 @@ La CI dell'MVP deve coprire almeno Linux e macOS. I test di sicurezza devono usa
 
 - layout a stack singolo e lock file separati;
 - stato rappresentato esclusivamente dal link live;
-- TUI senza argomenti;
 - `list`, `current`, `use` e `status`;
 - symlink relativi e switch atomico;
 - protezioni per directory reali, file e symlink inattesi;
@@ -404,6 +408,7 @@ Solo dopo l'uso dell'MVP e senza cambiare il modello di stato:
 
 - miglioramento delle diagnostiche e dei messaggi di recupero;
 - completion shell;
+- TUI per la selezione dello stack (progettazione nella sezione 6);
 - eventuali opzioni di output per script, se `current` e i comandi esistenti non bastano;
 - gestione esplicita di eventuali problemi di concorrenza emersi durante l'uso.
 

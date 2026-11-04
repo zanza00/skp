@@ -77,14 +77,14 @@ skills-stack status
 
 | Comando | Scopo |
 | --- | --- |
-| `skills-stack` | Aprire una TUI per scegliere e attivare uno stack. |
+| `skills-stack` | Stampare l'uso e uscire con codice `2`. |
 | `list` | Elencare gli stack, indicando quello attivo e quelli non selezionabili. |
 | `current` | Stampare il nome dello stack attivo, con output adatto agli script. |
 | `use <stack>` | Attivare uno stack valido sostituendo soltanto il link live. |
 | `status` | Diagnosticare link, target, stack corrente ed esclusione Git, senza riparare nulla. |
 
-La TUI e i comandi non interattivi condivideranno gli stessi controlli. In
-assenza di un link non verrà scelto alcuno stack predefinito.
+I comandi non interattivi condividono gli stessi controlli. In assenza di un
+link non verrà scelto alcuno stack predefinito. La TUI è rinviata alla Fase 2.
 
 ## Perimetro dell'MVP
 
@@ -97,8 +97,9 @@ Il primo perimetro prevede:
 - rifiuto di directory reali, file e symlink assoluti o inattesi sul percorso
   live, senza pulizie automatiche o cancellazioni ricorsive;
 - verifica che il link live sia ignorato da Git prima di crearlo o sostituirlo;
-- comandi utilizzabili anche da una sottodirectory del work tree;
-- TUI e comandi non interattivi, con supporto previsto per Linux e macOS.
+- comandi non interattivi, utilizzabili anche da una sottodirectory del work
+  tree;
+- supporto previsto per Linux e macOS.
 
 Restano fuori dall'MVP installazione e aggiornamento delle skill, risoluzione
 delle dipendenze, validazione del loro contenuto, copia o sincronizzazione,
@@ -109,9 +110,10 @@ modificherà la cronologia Git e non cambierà automaticamente `.gitignore`.
 ## Roadmap
 
 Dopo l'MVP, la proposta prevede il consolidamento di diagnostiche, completion
-shell ed eventuali esigenze di concorrenza. Portabilità, integrazioni opzionali
-e composizione degli stack saranno valutate separatamente; in particolare,
-un'eventuale modalità a copia non sarà un fallback implicito del symlink.
+shell, una TUI per la selezione ed eventuali esigenze di concorrenza.
+Portabilità, integrazioni opzionali e composizione degli stack saranno
+valutate separatamente; in particolare, un'eventuale modalità a copia non
+sarà un fallback implicito del symlink.
 
 ## Specifica completa
 
