@@ -47,9 +47,19 @@ live deve essere ignorato da Git, per esempio con `/.agents/skills` in
 ## Installazione
 
 Richiede Go 1.24 o successivo e Git. I target dell'MVP sono Linux e macOS.
+I task di build usano [Task](https://taskfile.dev/); in alternativa basta
+`go build`.
 
 ```sh
-go build -o skills-stack ./cmd/skills-stack
+task build     # bin/skills-stack
+task install   # ~/.local/bin/skills-stack
+```
+
+`task install` compila e copia il binario in `~/.local/bin`, che deve essere
+nel `PATH`. Senza Task:
+
+```sh
+go build -o bin/skills-stack ./cmd/skills-stack
 ```
 
 Il binario usa solo la standard library e i comandi Git già presenti sul
@@ -159,9 +169,10 @@ commit, non modifica la cronologia Git e non cambia automaticamente
 ## Sviluppo
 
 ```sh
+task build        # bin/skills-stack
+task install      # ~/.local/bin/skills-stack
 go test -race ./...
 go vet ./...
-go build ./cmd/skills-stack
 ```
 
 I test di integrazione creano repository Git temporanei e verificano anche i

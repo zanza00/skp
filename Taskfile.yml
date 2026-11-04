@@ -1,0 +1,26 @@
+version: "3"
+
+vars:
+  BINARY: skills-stack
+  BUILD_DIR: bin
+  PACKAGE: ./cmd/skills-stack
+  LOCAL_BIN: '{{.HOME}}/.local/bin'
+
+tasks:
+  default:
+    desc: Mostra i task disponibili
+    cmds:
+      - task --list
+
+  build:
+    desc: Compila il binario in bin/
+    cmds:
+      - mkdir -p "{{.BUILD_DIR}}"
+      - go build -trimpath -o "{{.BUILD_DIR}}/{{.BINARY}}" {{.PACKAGE}}
+
+  install:
+    desc: Compila e installa il binario in ~/.local/bin
+    cmds:
+      - task: build
+      - mkdir -p "{{.LOCAL_BIN}}"
+      - install -m 0755 "{{.BUILD_DIR}}/{{.BINARY}}" "{{.LOCAL_BIN}}/{{.BINARY}}"

@@ -1,2 +1,5 @@
 # Live skill-stack link: derived state, never committed
 /.agents/skills
+
+# Local build output
+/bin/

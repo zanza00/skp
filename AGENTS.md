@@ -117,6 +117,9 @@ Commit `skill-stacks/` and its lock file; never commit the live link.
 - Use the standard library first. Add a dependency only for a concrete need.
 - `cmd/skills-stack/` holds the entry point; `main.go` stays minimal and
   `internal/` holds the implementation.
+- Build with `task build` (output in `bin/`) and install with
+  `task install` (`~/.local/bin`); `Taskfile.yml` is the source of truth for
+  those commands.
 - Exit codes: `0` success, `1` operational/unsafe state, `2` usage error
   (including no arguments), `3` `current` with no live link. `-h`/`--help`
   exits `0`.
