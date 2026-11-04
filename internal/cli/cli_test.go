@@ -52,6 +52,9 @@ func TestHelp(t *testing.T) {
 			if !strings.Contains(got.stdout, "Uso:") {
 				t.Errorf("stdout = %q, want help", got.stdout)
 			}
+			if !strings.Contains(got.stdout, "--version") {
+				t.Errorf("stdout = %q, want version flag", got.stdout)
+			}
 			if got.stderr != "" {
 				t.Errorf("stderr = %q, want empty", got.stderr)
 			}
@@ -86,6 +89,7 @@ func TestUsageErrors(t *testing.T) {
 		{name: "use without stack", args: []string{"use"}},
 		{name: "use with two stacks", args: []string{"use", "a", "b"}},
 		{name: "help with argument", args: []string{"-h", "x"}},
+		{name: "version with argument", args: []string{"--version", "x"}},
 	}
 
 	for _, tt := range tests {

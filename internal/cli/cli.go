@@ -31,6 +31,12 @@ func Run(dir string, args []string, stdout, stderr io.Writer) int {
 		}
 		printHelp(stdout)
 		return ExitOK
+	case "--version":
+		if len(args) != 1 {
+			return usageError(stderr, "%s non accetta argomenti", args[0])
+		}
+		printVersion(stdout)
+		return ExitOK
 	case "list":
 		if len(args) != 1 {
 			return usageError(stderr, "list non accetta argomenti")
@@ -122,6 +128,7 @@ Uso:
   skills-stack use <stack>
   skills-stack status
   skills-stack -h | --help
+  skills-stack --version
 
 Comandi:
   list       elenca gli stack e indica quello attivo
@@ -129,6 +136,10 @@ Comandi:
   init       importa .agents/skills in un nuovo stack e lo attiva
   use        attiva uno stack sostituendo il link .agents/skills
   status     mostra una diagnostica senza modificare nulla
+
+Opzioni:
+  -h, --help   mostra questo aiuto
+  --version    stampa commit e data del commit
 
 Exit code:
   0  operazione completata
