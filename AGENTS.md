@@ -8,9 +8,12 @@ documentation.
 `skills-stack` is a small Go CLI that activates one Agent Skills stack per Git
 repository by swapping a single relative symlink. The name is provisional.
 
-**Current state: design only.** There is no Go module and no binary yet. The
-contract lives in [`notes/README.md`](notes/README.md); [`README.md`](README.md)
-is the public summary. If they disagree, `notes/README.md` wins.
+**Current state: MVP implemented.** The module is
+`codefloe.com/zanza00/skills-stack`; `cmd/skills-stack/` is the entry point and
+`internal/` holds the implementation. `list`, `current`, `use` and `status` are
+covered by unit and integration tests. The contract lives in
+[`notes/README.md`](notes/README.md); [`README.md`](README.md) is the public
+summary. If they disagree, `notes/README.md` wins.
 
 ## Scope
 
@@ -59,6 +62,17 @@ skill-stacks/go/
 └── skills-lock.json                                  # committed lock file
 ```
 
+Code layout:
+
+```text
+cmd/skills-stack/main.go   # entry point, os.Exit only
+internal/
+├── cli/                   # dispatch, help, exit codes, output
+├── workspace/             # Git root, layout paths, check-ignore
+├── stack/                 # name validation, discovery, validity
+└── live/                  # Lstat, target parsing, atomic replace
+```
+
 Installed in `skill-stacks/go/`:
 
 Go layer, from `samber/cc-skills-golang`:
@@ -101,8 +115,8 @@ Commit `skill-stacks/` and its lock file; never commit the live link.
 ## Implementation guidelines
 
 - Use the standard library first. Add a dependency only for a concrete need.
-- When the module exists: `cmd/skills-stack/` for the entry point, `internal/`
-  for the implementation, `main.go` minimal.
+- `cmd/skills-stack/` holds the entry point; `main.go` stays minimal and
+  `internal/` holds the implementation.
 - Exit codes: `0` success, `1` operational/unsafe state, `2` usage error
   (including no arguments), `3` `current` with no live link. `-h`/`--help`
   exits `0`.
@@ -152,7 +166,8 @@ Rules:
 
 ## Open decisions
 
-- Final project, binary and Go module name.
+- Final project, binary and Go module name (`codefloe.com/zanza00/skills-stack`
+  is derived from the remote and easy to change).
 - Cobra adoption in phase 2 (completion, richer help).
 - TUI reintroduction in phase 2.
 - Layering model: independent stacks composed by the CLI vs flattened

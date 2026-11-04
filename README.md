@@ -1,11 +1,12 @@
 # skills-stack
 
-`skills-stack` è il nome provvisorio di una CLI per selezionare e attivare
-uno stack di Agent Skills all'interno di un repository Git.
+`skills-stack` è una CLI per selezionare e attivare uno stack di Agent Skills
+all'interno di un repository Git. Il nome è ancora provvisorio.
 
-> **Stato attuale:** il repository contiene la proposta e il design della CLI,
-> non ancora un binario implementato. I comandi descritti qui sono quindi il
-> comportamento previsto, non funzionalità già disponibili.
+> **Stato attuale:** l'MVP è implementato. `list`, `current`, `use` e `status`
+> funzionano da un work tree Git, usano un symlink relativo e sostituiscono il
+> link live con una singola `rename`. TUI, completion, supporto Windows e
+> gestione delle skill restano fuori dal perimetro.
 
 ## Il problema
 
@@ -43,9 +44,34 @@ di configurazione o un secondo registro che ricordi lo stack corrente. Il link
 live deve essere ignorato da Git, per esempio con `/.agents/skills` in
 `.gitignore`; gli stack e i rispettivi lock file restano invece committabili.
 
-La CLI individuerà la root tramite Git e gestirà esclusivamente il link live.
-Lo switch sostituirà il symlink in modo atomico, senza attraversarlo e senza
-cambiare il contenuto degli stack.
+## Installazione
+
+Richiede Go 1.24 o successivo e Git. I target dell'MVP sono Linux e macOS.
+
+```sh
+go build -o skills-stack ./cmd/skills-stack
+```
+
+Il binario usa solo la standard library e i comandi Git già presenti sul
+sistema: non ci sono dipendenze Go esterne né un package manager interno.
+
+## Uso rapido
+
+Primo utilizzo, con uno stack chiamato `work`:
+
+```sh
+printf '/.agents/skills\n' >> .gitignore
+mkdir -p skill-stacks/work
+cd skill-stacks/work
+npx skills add <riferimento-skill>   # scegliendo un target che scrive in .agents/skills
+cd ../..
+skills-stack use work
+skills-stack status
+```
+
+Le skill vanno sempre gestite dalla directory dello stack, mai attraverso il
+link live. Dopo uno switch, una sessione dell'agente già aperta può richiedere
+un riavvio.
 
 ## Gestione delle skill e switching
 
@@ -60,12 +86,11 @@ npx skills remove ...
 ```
 
 Ogni stack conserva così i propri file e il proprio lock file, anche quando non
-è attivo. `skills-stack` non farà da wrapper a `npx` e non sarà un package
-manager: si occuperà soltanto di scoprire gli stack, mostrare lo stato e
-cambiare la selezione. Dopo uno switch, una sessione dell'agente già aperta
-potrebbe dover essere riavviata per caricare le nuove skill.
+è attivo. `skills-stack` non fa da wrapper a `npx` e non è un package manager:
+si occupa soltanto di scoprire gli stack, mostrare lo stato e cambiare la
+selezione.
 
-## Comandi previsti
+## Comandi
 
 ```text
 skills-stack
@@ -75,20 +100,43 @@ skills-stack use <stack>
 skills-stack status
 ```
 
-| Comando | Scopo |
+| Comando | Comportamento |
 | --- | --- |
-| `skills-stack` | Stampare l'uso e uscire con codice `2`. |
-| `list` | Elencare gli stack, indicando quello attivo e quelli non selezionabili. |
-| `current` | Stampare il nome dello stack attivo, con output adatto agli script. |
-| `use <stack>` | Attivare uno stack valido sostituendo soltanto il link live. |
-| `status` | Diagnosticare link, target, stack corrente ed esclusione Git, senza riparare nulla. |
+| `skills-stack` | Stampa l'uso su stderr ed esce con `2`. |
+| `list` | Elenca gli stack, indicando quello attivo e quelli non selezionabili. |
+| `current` | Stampa solo il nome dello stack attivo, adatto agli script. |
+| `use <stack>` | Attiva uno stack valido sostituendo soltanto il link live. |
+| `status` | Diagnostica link, target, stack corrente ed esclusione Git, senza riparare nulla. |
 
-I comandi non interattivi condividono gli stessi controlli. In assenza di un
-link non verrà scelto alcuno stack predefinito. La TUI è rinviata alla Fase 2.
+`-h` e `--help` stampano l'aiuto su stdout ed escono con `0`. I comandi non
+interattivi non chiedono conferme e non leggono da stdin.
 
-## Perimetro dell'MVP
+### Esempio di `list`
 
-Il primo perimetro prevede:
+```text
+! _trial (nome non ammesso)
+! broken (.agents/skills mancante)
+  personal
+* work
+```
+
+`*` indica lo stack attivo, `!` uno stack non selezionabile con il motivo.
+
+### Exit code
+
+| Codice | Significato |
+| --- | --- |
+| `0` | Operazione completata. |
+| `1` | Errore operativo o stato non sicuro: stack assente o non valido, conflitto sul link, target inatteso, errore Git o filesystem. |
+| `2` | Errore d'uso: comando o argomenti non validi; include l'invocazione senza argomenti. |
+| `3` | Solo per `current`: nessuno stack attivo perché il link live non esiste. |
+
+`current` è l'interfaccia consigliata per gli script: in caso di successo
+stampa soltanto il nome dello stack seguito da newline. Un link presente ma
+rotto o inatteso non vale come «nessuno stack attivo»: `current` restituisce
+`1`, perché è uno stato da diagnosticare.
+
+## Cosa implementa l'MVP
 
 - stack contenuti direttamente in `skill-stacks/`, con nomi e directory delle
   skill validati prima dello switch;
@@ -104,16 +152,28 @@ Il primo perimetro prevede:
 Restano fuori dall'MVP installazione e aggiornamento delle skill, risoluzione
 delle dipendenze, validazione del loro contenuto, copia o sincronizzazione,
 composizione di più stack, stack predefiniti, file di configurazione, gestione
-simultanea di più agenti e supporto Windows. La CLI non creerà commit, non
-modificherà la cronologia Git e non cambierà automaticamente `.gitignore`.
+simultanea di più agenti, supporto Windows, TUI e completion. La CLI non crea
+commit, non modifica la cronologia Git e non cambia automaticamente
+`.gitignore`.
+
+## Sviluppo
+
+```sh
+go test -race ./...
+go vet ./...
+go build ./cmd/skills-stack
+```
+
+I test di integrazione creano repository Git temporanei e verificano anche i
+casi di sicurezza con file sentinella; non eseguono `npx skills`.
 
 ## Roadmap
 
 Dopo l'MVP, la proposta prevede il consolidamento di diagnostiche, completion
 shell, una TUI per la selezione ed eventuali esigenze di concorrenza.
 Portabilità, integrazioni opzionali e composizione degli stack saranno
-valutate separatamente; in particolare, un'eventuale modalità a copia non
-sarà un fallback implicito del symlink.
+valutate separatamente; in particolare, un'eventuale modalità a copia non sarà
+un fallback implicito del symlink.
 
 ## Specifica completa
 
