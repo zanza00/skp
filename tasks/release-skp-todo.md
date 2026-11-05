@@ -117,22 +117,22 @@ funzionalità non ancora rilasciate.
 
 **Criteri di accettazione:**
 
-- [ ] `README.md`, `notes/README.md` e `AGENTS.md` usano `skp`, `cmd/skp/` e il
+- [x] `README.md`, `notes/README.md` e `AGENTS.md` usano `skp`, `cmd/skp/` e il
   modulo GitHub; la decisione sul nome provvisorio è chiusa.
-- [ ] `LICENSE` contiene la licenza scelta con anno e titolare corretti; README e
+- [x] `LICENSE` contiene la licenza scelta con anno e titolare corretti; README e
   formula useranno lo stesso identificativo SPDX.
-- [ ] Gli esempi conservano invariati `skill-stacks/`, `.agents/skills`, comandi,
+- [x] Gli esempi conservano invariati `skill-stacks/`, `.agents/skills`, comandi,
   exit code e limiti dell'MVP.
-- [ ] Le istruzioni mostrano `brew install zanza00/tap/skp` e
+- [x] Le istruzioni mostrano `brew install zanza00/tap/skp` e
   `go install github.com/zanza00/skp/cmd/skp@latest`; la loro esecuzione resta un
   criterio del Task 8, non una verifica anticipata.
 
 **Verifica:**
 
-- [ ] Controllo incrociato tra README, specifica, `Taskfile.yml` e comportamento del
+- [x] Controllo incrociato tra README, specifica, `Taskfile.yml` e comportamento del
   binario.
-- [ ] `go test -race ./...`, `go vet ./...` e `task build`.
-- [ ] Ricerca del vecchio nome escludendo `tasks/` e note di migrazione intenzionali.
+- [x] `go test -race ./...`, `go vet ./...` e `task build`.
+- [x] Ricerca del vecchio nome escludendo `tasks/` e note di migrazione intenzionali.
 
 **Dipendenze:** Task 3.
 
@@ -147,8 +147,8 @@ funzionalità non ancora rilasciate.
 
 ### Checkpoint rinomina
 
-- [ ] Suite completa e build verdi; nessun comportamento funzionale modificato.
-- [ ] Review del diff per accertare che le uniche variazioni siano rinomina,
+- [x] Suite completa e build verdi; nessun comportamento funzionale modificato.
+- [x] Review del diff per accertare che le uniche variazioni siano rinomina,
   documentazione e licenza.
 
 ## Task 5 — Aggiungere CI GitHub Actions

@@ -1,6 +1,6 @@
-# skills-stack: specifica iniziale
+# skp: specifica iniziale
 
-Documento di lavoro per una CLI Go che seleziona uno stack di Agent Skills e lo rende attivo in un repository. `skills-stack` è un nome provvisorio, usato sia per il progetto sia per il comando negli esempi.
+Documento di lavoro per una CLI Go che seleziona uno stack di Agent Skills e lo rende attivo in un repository. Il progetto e il comando usano il nome `skp`; il modulo Go è `github.com/zanza00/skp`.
 
 Le sezioni marcate **MVP** descrivono il primo perimetro implementabile. Le estensioni sono raccolte separatamente e non sono requisiti dell'MVP.
 
@@ -104,14 +104,14 @@ stack gestito, dalla root del repository (o da una sua sottodirectory):
 2. Importare l'installazione in uno stack:
 
    ```sh
-   skills-stack init work
+   skp init work
    ```
 
 3. Verificare il risultato:
 
    ```sh
-   skills-stack current
-   skills-stack status
+   skp current
+   skp status
    ```
 
 `init` sposta `.agents/skills` in `skill-stacks/work/.agents/skills`, sposta
@@ -152,13 +152,13 @@ Esempio con uno stack chiamato `work`:
 4. Tornare nel repository e attivare lo stack:
 
    ```sh
-   skills-stack use work
+   skp use work
    ```
 
 5. Verificare lo stato, se necessario:
 
    ```sh
-   skills-stack status
+   skp status
    ```
 
 6. Riavviare la sessione dell'agente se era già aperta e potrebbe avere caricato le skill precedenti.
@@ -168,10 +168,10 @@ In questo flusso manuale la CLI non crea lo stack e non prepara automaticamente 
 ### 4.3 Switch tra stack esistenti
 
 ```sh
-skills-stack list
-skills-stack current
-skills-stack use personal
-skills-stack current
+skp list
+skp current
+skp use personal
+skp current
 ```
 
 `use` cambia soltanto il link live. Non copia file, non modifica lock file e non esegue `npx`. Dopo lo switch può essere necessario riavviare la sessione dell'agente.
@@ -200,13 +200,13 @@ Regole del flusso:
 ### Convenzioni generali
 
 ```text
-skills-stack
-skills-stack list
-skills-stack current
-skills-stack init <stack>
-skills-stack use <stack>
-skills-stack status
-skills-stack --version
+skp
+skp list
+skp current
+skp init <stack>
+skp use <stack>
+skp status
+skp --version
 ```
 
 - I comandi non interattivi non chiedono conferme e non leggono la scelta da stdin.
@@ -229,7 +229,7 @@ Un link presente ma rotto o inatteso non equivale a «nessuno stack attivo»: `c
 ### 5.1 Nessun argomento: aiuto
 
 ```sh
-skills-stack
+skp
 ```
 
 Senza argomenti il comando stampa l'uso su stderr ed esce con codice `2`; non
@@ -246,7 +246,7 @@ sezione 6 per la Fase 2.
 ### 5.2 `list`
 
 ```sh
-skills-stack list
+skp list
 ```
 
 Elenca le directory immediatamente sotto `skill-stacks/`, ordinate per nome. Per ciascuna mostra:
@@ -268,7 +268,7 @@ Il comando non modifica il link. Un repository senza stack produce un elenco vuo
 ### 5.3 `current`
 
 ```sh
-skills-stack current
+skp current
 ```
 
 - Se il link live è un symlink relativo riconosciuto e punta a uno stack valido, stampa solo `<nome-stack>` ed esce con `0`.
@@ -280,7 +280,7 @@ Il comando non deduce lo stato dal lock file, dalla directory corrente, da una c
 ### 5.4 `init <stack>`
 
 ```sh
-skills-stack init work
+skp init work
 ```
 
 Converte un'installazione esistente in uno stack gestito.
@@ -314,7 +314,7 @@ Casi particolari:
 ### 5.5 `use <stack>`
 
 ```sh
-skills-stack use work
+skp use work
 ```
 
 Attiva esattamente lo stack indicato.
@@ -338,7 +338,7 @@ Casi particolari:
 ### 5.6 `status`
 
 ```sh
-skills-stack status
+skp status
 ```
 
 Mostra una diagnostica leggibile di:
@@ -536,7 +536,6 @@ Funzioni che richiedono una revisione del modello di stato e non devono essere a
 
 Le seguenti questioni restano aperte e non bloccano l'MVP descritto:
 
-- **Nome definitivo**: nome del progetto, del binario e del modulo Go. `skills-stack` resta un segnaposto.
 - **Supporto Windows**: se e quando supportarlo, e con quale meccanismo sul filesystem.
 - **Composizione base + stack**: semantiche di layering, precedenza, lock file e rappresentazione dello stato.
 - **Configurazione e default**: presenza, formato e posizione di un file di configurazione; eventuale stack predefinito e precedenza tra default e scelta esplicita.

@@ -1,7 +1,7 @@
-# skills-stack
+# skp
 
-`skills-stack` è una CLI per selezionare e attivare uno stack di Agent Skills
-all'interno di un repository Git. Il nome è ancora provvisorio.
+`skp` è una CLI per selezionare e attivare uno stack di Agent Skills
+all'interno di un repository Git.
 
 > **Stato attuale:** l'MVP è implementato. `list`, `current`, `init`, `use` e
 > `status` funzionano da un work tree Git, usano un symlink relativo e
@@ -47,20 +47,35 @@ live deve essere ignorato da Git, per esempio con `/.agents/skills` in
 
 ## Installazione
 
-Richiede Go 1.24 o successivo e Git. I target dell'MVP sono Linux e macOS.
+Il binario richiede Git ed è disponibile per Linux e macOS su AMD64 e ARM64.
+
+Con Homebrew:
+
+```sh
+brew install zanza00/tap/skp
+```
+
+Con Go 1.24 o successivo:
+
+```sh
+go install github.com/zanza00/skp/cmd/skp@latest
+```
+
+### Build da sorgente
+
 I task di build usano [Task](https://taskfile.dev/); in alternativa basta
 `go build`.
 
 ```sh
-task build     # bin/skills-stack
-task install   # ~/.local/bin/skills-stack
+task build     # bin/skp
+task install   # ~/.local/bin/skp
 ```
 
 `task install` compila e copia il binario in `~/.local/bin`, che deve essere
 nel `PATH`. Senza Task:
 
 ```sh
-go build -o bin/skills-stack ./cmd/skills-stack
+go build -o bin/skp ./cmd/skp
 ```
 
 Il binario usa solo la standard library e i comandi Git già presenti sul
@@ -77,8 +92,8 @@ gestito:
 # se l'esclusione non è già presente
 printf '/.agents/skills\n' >> .gitignore
 
-skills-stack init work
-skills-stack current
+skp init work
+skp current
 ```
 
 `init` sposta `.agents/skills` e l'eventuale `skills-lock.json` in
@@ -93,8 +108,8 @@ mkdir -p skill-stacks/work
 cd skill-stacks/work
 npx skills add <riferimento-skill>   # scegliendo un target che scrive in .agents/skills
 cd ../..
-skills-stack use work
-skills-stack status
+skp use work
+skp status
 ```
 
 Le skill vanno sempre gestite dalla directory dello stack, mai attraverso il
@@ -114,25 +129,25 @@ npx skills remove ...
 ```
 
 Ogni stack conserva così i propri file e il proprio lock file, anche quando non
-è attivo. `skills-stack` non fa da wrapper a `npx` e non è un package manager:
+è attivo. `skp` non fa da wrapper a `npx` e non è un package manager:
 si occupa soltanto di scoprire gli stack, mostrare lo stato e cambiare la
 selezione.
 
 ## Comandi
 
 ```text
-skills-stack
-skills-stack list
-skills-stack current
-skills-stack init <stack>
-skills-stack use <stack>
-skills-stack status
-skills-stack --version
+skp
+skp list
+skp current
+skp init <stack>
+skp use <stack>
+skp status
+skp --version
 ```
 
 | Comando | Comportamento |
 | --- | --- |
-| `skills-stack` | Stampa l'uso su stderr ed esce con `2`. |
+| `skp` | Stampa l'uso su stderr ed esce con `2`. |
 | `list` | Elenca gli stack, indicando quello attivo e quelli non selezionabili. |
 | `current` | Stampa solo il nome dello stack attivo, adatto agli script. |
 | `init <stack>` | Importa `.agents/skills` e l'eventuale lock in un nuovo stack, poi lo attiva. |
@@ -194,8 +209,8 @@ automaticamente `.gitignore`.
 ## Sviluppo
 
 ```sh
-task build        # bin/skills-stack
-task install      # ~/.local/bin/skills-stack
+task build        # bin/skp
+task install      # ~/.local/bin/skp
 go test -race ./...
 go vet ./...
 ```
@@ -215,4 +230,8 @@ un fallback implicito del symlink.
 
 La [specifica iniziale](notes/README.md) descrive il contratto dei comandi, gli
 exit code, i casi limite, la strategia di testing, le fasi successive e le
-decisioni ancora aperte, incluso il nome definitivo del progetto.
+decisioni ancora aperte.
+
+## Licenza
+
+`skp` è distribuito con [licenza MIT](LICENSE).

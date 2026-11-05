@@ -55,8 +55,7 @@ Al 5 novembre 2026:
 - **Nessuna nuova dipendenza runtime:** il binario continua a usare solo Go
   standard library e Git. Python e `gh` sono strumenti della sola automazione di
   pubblicazione, come già avviene per `source-fetch`.
-- **Licenza:** la proposta è MIT, da confermare prima di rendere pubblico il
-  repository e prima di compilare il campo `license` della formula.
+- **Licenza:** MIT, confermata dal proprietario prima della pubblicazione.
 
 ## Ordine e dipendenze
 
@@ -148,7 +147,6 @@ stati distribuiti, con una release patch successiva.
 
 ## Questioni aperte
 
-- **Licenza:** confermare MIT oppure scegliere un'altra licenza prima del Task 4.
 - **Codefloe:** decidere in seguito se resterà mirror, remote di sola lettura o
   verrà dismesso; non è un prerequisito della prima release.
 

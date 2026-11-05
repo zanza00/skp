@@ -1,15 +1,15 @@
 # AGENTS.md
 
-Project instructions for `skills-stack`. Read this before changing code or
+Project instructions for `skp`. Read this before changing code or
 documentation.
 
 ## What this is
 
-`skills-stack` is a small Go CLI that activates one Agent Skills stack per Git
-repository by swapping a single relative symlink. The name is provisional.
+`skp` is a small Go CLI that activates one Agent Skills stack per Git
+repository by swapping a single relative symlink.
 
 **Current state: MVP implemented.** The module is
-`codefloe.com/zanza00/skills-stack`; `cmd/skills-stack/` is the entry point and
+`github.com/zanza00/skp`; `cmd/skp/` is the entry point and
 `internal/` holds the implementation. `list`, `current`, `init`, `use` and
 `status` are covered by unit and integration tests. The contract lives in
 [`notes/README.md`](notes/README.md); [`README.md`](README.md) is the public
@@ -77,7 +77,7 @@ skill-stacks/go/
 Code layout:
 
 ```text
-cmd/skills-stack/main.go   # entry point, os.Exit only
+cmd/skp/main.go   # entry point, os.Exit only
 internal/
 ├── cli/                   # dispatch, help, exit codes, output
 ├── workspace/             # Git root, layout paths, check-ignore
@@ -127,7 +127,7 @@ Commit `skill-stacks/` and its lock file; never commit the live link.
 ## Implementation guidelines
 
 - Use the standard library first. Add a dependency only for a concrete need.
-- `cmd/skills-stack/` holds the entry point; `main.go` stays minimal and
+- `cmd/skp/` holds the entry point; `main.go` stays minimal and
   `internal/` holds the implementation.
 - Build with `task build` (output in `bin/`) and install with
   `task install` (`~/.local/bin`); `Taskfile.yml` is the source of truth for
@@ -183,8 +183,6 @@ Rules:
 
 ## Open decisions
 
-- Final project, binary and Go module name (`codefloe.com/zanza00/skills-stack`
-  is derived from the remote and easy to change).
 - Cobra adoption in phase 2 (completion, richer help).
 - TUI reintroduction in phase 2.
 - Layering model: independent stacks composed by the CLI vs flattened
