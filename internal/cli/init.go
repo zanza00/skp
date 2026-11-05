@@ -49,7 +49,7 @@ func runInitWith(ws *workspace.Workspace, name string, stdout, stderr io.Writer,
 	case live.Absent:
 		return fail(stderr, "nulla da importare: .agents/skills non esiste")
 	case live.Managed, live.UnexpectedSymlink:
-		return fail(stderr, ".agents/skills è già un symlink: usa \"skills-stack use <stack>\" per cambiare stack")
+		return fail(stderr, ".agents/skills è già un symlink: usa \"skp use <stack>\" per cambiare stack")
 	case live.File:
 		return fail(stderr, ".agents/skills è un file regolare: intervento manuale richiesto")
 	default:
@@ -85,7 +85,7 @@ func runInitWith(ws *workspace.Workspace, name string, stdout, stderr io.Writer,
 		return fail(stderr, "%v", err)
 	}
 	if !ignored {
-		fmt.Fprint(stderr, `skills-stack: .agents/skills non è ignorato da Git.
+		fmt.Fprint(stderr, `skp: .agents/skills non è ignorato da Git.
 
 Aggiungi questa riga a .gitignore e riprova:
 
@@ -211,10 +211,10 @@ func (tx *initTransaction) rollback() error {
 }
 
 func initFailure(stderr io.Writer, name string, cause error, tx *initTransaction) int {
-	fmt.Fprintf(stderr, "skills-stack: %v\n", cause)
+	fmt.Fprintf(stderr, "skp: %v\n", cause)
 	if err := tx.rollback(); err != nil {
-		fmt.Fprintf(stderr, "skills-stack: rollback incompleto: %v\n", err)
-		fmt.Fprintf(stderr, "skills-stack: controlla manualmente .agents/skills, skills-lock.json e skill-stacks/%s\n", name)
+		fmt.Fprintf(stderr, "skp: rollback incompleto: %v\n", err)
+		fmt.Fprintf(stderr, "skp: controlla manualmente .agents/skills, skills-lock.json e skill-stacks/%s\n", name)
 	}
 	return ExitFailure
 }

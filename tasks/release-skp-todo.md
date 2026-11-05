@@ -80,20 +80,20 @@ al nome.
 
 **Criteri di accettazione:**
 
-- [ ] `task build` produce `bin/skp` e `task install` installa `skp`.
-- [ ] `skp --help` e la prima riga di `skp --version` riportano `skp`.
-- [ ] Sintassi, output (a parte il nome), exit code, symlink temporanei e
+- [x] `task build` produce `bin/skp` e `task install` installa `skp`.
+- [x] `skp --help` e la prima riga di `skp --version` riportano `skp`.
+- [x] Sintassi, output (a parte il nome), exit code, symlink temporanei e
   comportamenti di `list`, `current`, `init`, `use` e `status` restano invariati.
-- [ ] Non restano riferimenti attivi a `skills-stack` o `.skills-stack-tmp-` nel
+- [x] Non restano riferimenti attivi a `skills-stack` o `.skills-stack-tmp-` nel
   codice e nei test; il layout `skill-stacks/` non viene rinominato.
 
 **Verifica:**
 
-- [ ] `go test -race ./...`
-- [ ] `go vet ./...`
-- [ ] `task build` e smoke test di `bin/skp --help`, `bin/skp --version` e
+- [x] `go test -race ./...`
+- [x] `go vet ./...`
+- [x] `task build` e smoke test di `bin/skp --help`, `bin/skp --version` e
   `bin/skp current` in un repository temporaneo.
-- [ ] `rg 'skills-stack|\.skills-stack-tmp-' cmd internal Taskfile.yml` senza
+- [x] `rg 'skills-stack|\.skills-stack-tmp-' cmd internal Taskfile.yml` senza
   risultati.
 
 **Dipendenze:** Task 2.

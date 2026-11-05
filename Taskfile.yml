@@ -1,9 +1,9 @@
 version: "3"
 
 vars:
-  BINARY: skills-stack
+  BINARY: skp
   BUILD_DIR: bin
-  PACKAGE: ./cmd/skills-stack
+  PACKAGE: ./cmd/skp
   LOCAL_BIN: '{{.HOME}}/.local/bin'
 
 tasks:

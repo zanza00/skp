@@ -21,7 +21,7 @@ func printVersion(w io.Writer) {
 	if date == "" {
 		date = unknownCommitDate
 	}
-	fmt.Fprintln(w, "skills-stack")
+	fmt.Fprintln(w, "skp")
 	fmt.Fprintf(w, "commit: %s\n", commit)
 	fmt.Fprintf(w, "data commit: %s\n", date)
 }

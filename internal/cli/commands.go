@@ -240,7 +240,7 @@ func runUse(ws *workspace.Workspace, name string, stdout, stderr io.Writer) int 
 		return fail(stderr, "%v", err)
 	}
 	if !ignored {
-		fmt.Fprint(stderr, `skills-stack: .agents/skills non è ignorato da Git.
+		fmt.Fprint(stderr, `skp: .agents/skills non è ignorato da Git.
 
 Aggiungi questa riga a .gitignore e riprova:
 

@@ -24,8 +24,8 @@ func TestVersion(t *testing.T) {
 	if len(lines) != 3 {
 		t.Fatalf("stdout = %q, want three lines", stdout.String())
 	}
-	if lines[0] != "skills-stack" {
-		t.Errorf("line 0 = %q, want %q", lines[0], "skills-stack")
+	if lines[0] != "skp" {
+		t.Errorf("line 0 = %q, want %q", lines[0], "skp")
 	}
 	if !strings.HasPrefix(lines[1], "commit: ") || strings.TrimPrefix(lines[1], "commit: ") == "" {
 		t.Errorf("line 1 = %q, want a non-empty commit", lines[1])

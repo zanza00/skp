@@ -244,7 +244,7 @@ func assertNoTempLinks(t *testing.T, dir string) {
 		t.Fatal(err)
 	}
 	for _, entry := range entries {
-		if strings.HasPrefix(entry.Name(), ".skills-stack-tmp-") {
+		if strings.HasPrefix(entry.Name(), ".skp-tmp-") {
 			t.Errorf("temporary link left behind: %s", entry.Name())
 		}
 	}

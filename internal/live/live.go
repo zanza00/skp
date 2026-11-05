@@ -109,7 +109,7 @@ func createTempSymlink(dir, target string) (string, error) {
 		if _, err := rand.Read(random[:]); err != nil {
 			return "", fmt.Errorf("generare il nome del symlink temporaneo: %w", err)
 		}
-		path := filepath.Join(dir, ".skills-stack-tmp-"+hex.EncodeToString(random[:]))
+		path := filepath.Join(dir, ".skp-tmp-"+hex.EncodeToString(random[:]))
 		err := os.Symlink(target, path)
 		if err == nil {
 			return path, nil

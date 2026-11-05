@@ -66,7 +66,7 @@ func Run(dir string, args []string, stdout, stderr io.Writer) int {
 		return runStatus(ws, stdout, stderr)
 	case "init":
 		if len(args) != 2 {
-			return usageError(stderr, "uso: skills-stack init <stack>")
+			return usageError(stderr, "uso: skp init <stack>")
 		}
 		ws, code := openWorkspace(dir, stderr)
 		if ws == nil {
@@ -75,7 +75,7 @@ func Run(dir string, args []string, stdout, stderr io.Writer) int {
 		return runInit(ws, args[1], stdout, stderr)
 	case "use":
 		if len(args) != 2 {
-			return usageError(stderr, "uso: skills-stack use <stack>")
+			return usageError(stderr, "uso: skp use <stack>")
 		}
 		ws, code := openWorkspace(dir, stderr)
 		if ws == nil {
@@ -96,39 +96,39 @@ func openWorkspace(dir string, stderr io.Writer) (*workspace.Workspace, int) {
 }
 
 func fail(stderr io.Writer, format string, args ...any) int {
-	fmt.Fprintf(stderr, "skills-stack: "+format+"\n", args...)
+	fmt.Fprintf(stderr, "skp: "+format+"\n", args...)
 	return ExitFailure
 }
 
 func usageError(stderr io.Writer, format string, args ...any) int {
-	fmt.Fprintf(stderr, "skills-stack: "+format+"\n\n", args...)
+	fmt.Fprintf(stderr, "skp: "+format+"\n\n", args...)
 	printUsage(stderr)
 	return ExitUsage
 }
 
 func printUsage(w io.Writer) {
 	fmt.Fprint(w, `Uso:
-  skills-stack list
-  skills-stack current
-  skills-stack init <stack>
-  skills-stack use <stack>
-  skills-stack status
+  skp list
+  skp current
+  skp init <stack>
+  skp use <stack>
+  skp status
 
-Esegui "skills-stack -h" per l'aiuto completo.
+Esegui "skp -h" per l'aiuto completo.
 `)
 }
 
 func printHelp(w io.Writer) {
-	fmt.Fprint(w, `skills-stack gestisce lo stack di Agent Skills attivo in un repository Git.
+	fmt.Fprint(w, `skp gestisce lo stack di Agent Skills attivo in un repository Git.
 
 Uso:
-  skills-stack list
-  skills-stack current
-  skills-stack init <stack>
-  skills-stack use <stack>
-  skills-stack status
-  skills-stack -h | --help
-  skills-stack --version
+  skp list
+  skp current
+  skp init <stack>
+  skp use <stack>
+  skp status
+  skp -h | --help
+  skp --version
 
 Comandi:
   list       elenca gli stack e indica quello attivo
