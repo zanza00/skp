@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"codefloe.com/zanza00/skills-stack/internal/live"
+	"github.com/zanza00/skp/internal/live"
 )
 
 // TestMain isolates tests from the user's global Git configuration, which

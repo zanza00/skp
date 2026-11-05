@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"codefloe.com/zanza00/skills-stack/internal/live"
-	"codefloe.com/zanza00/skills-stack/internal/workspace"
+	"github.com/zanza00/skp/internal/live"
+	"github.com/zanza00/skp/internal/workspace"
 )
 
 func TestInitImportsRealDirectory(t *testing.T) {

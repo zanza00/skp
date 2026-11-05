@@ -1,3 +1,3 @@
-module codefloe.com/zanza00/skills-stack
+module github.com/zanza00/skp
 
 go 1.24

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"codefloe.com/zanza00/skills-stack/internal/cli"
+	"github.com/zanza00/skp/internal/cli"
 )
 
 func main() {

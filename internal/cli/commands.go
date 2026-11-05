@@ -6,9 +6,9 @@ import (
 	"io"
 	"os"
 
-	"codefloe.com/zanza00/skills-stack/internal/live"
-	"codefloe.com/zanza00/skills-stack/internal/stack"
-	"codefloe.com/zanza00/skills-stack/internal/workspace"
+	"github.com/zanza00/skp/internal/live"
+	"github.com/zanza00/skp/internal/stack"
+	"github.com/zanza00/skp/internal/workspace"
 )
 
 func runList(ws *workspace.Workspace, stdout, stderr io.Writer) int {

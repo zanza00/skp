@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"codefloe.com/zanza00/skills-stack/internal/workspace"
+	"github.com/zanza00/skp/internal/workspace"
 )
 
 // Exit codes defined by the command contract.

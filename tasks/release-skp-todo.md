@@ -11,20 +11,20 @@ pubblici.
 
 **Criteri di accettazione:**
 
-- [ ] Sono confermati `skp` per progetto/binario/formula,
+- [x] Sono confermati `skp` per progetto/binario/formula,
   `github.com/zanza00/skp` per il modulo e `v0.1.0` per la prima release.
-- [ ] `zanza00/skp` è creabile, `zanza00/homebrew-tap` è quello verificato e non
+- [x] `zanza00/skp` è creabile, `zanza00/homebrew-tap` è quello verificato e non
   esiste un conflitto `skp` in Homebrew Core o nel tap personale.
-- [ ] La licenza è scelta esplicitamente; la proposta MIT è confermata o
+- [x] La licenza è scelta esplicitamente; la proposta MIT è confermata o
   sostituita prima dei task successivi.
-- [ ] Si decide consapevolmente di riusare la formula e il publisher con test del
+- [x] Si decide consapevolmente di riusare la formula e il publisher con test del
   tap esistente, non la configurazione GoReleaser `brews` deprecata.
 
 **Verifica:**
 
-- [ ] Controllare repository, formula e cask con GitHub/Homebrew API e registrare
+- [x] Controllare repository, formula e cask con GitHub/Homebrew API e registrare
   nel task eventuali differenze rispetto alla fotografia del piano.
-- [ ] Rileggere README del tap e il riferimento `source-fetch` per confermare
+- [x] Rileggere README del tap e il riferimento `source-fetch` per confermare
   convenzioni, secret e piattaforme.
 
 **Dipendenze:** nessuna.
@@ -36,7 +36,7 @@ se emergono decisioni diverse.
 
 ### Checkpoint umano
 
-- [ ] Nome, owner GitHub, licenza e comando di installazione sono approvati prima
+- [x] Nome, owner GitHub, licenza e comando di installazione sono approvati prima
   di iniziare la rinomina.
 
 ## Task 2 — Rinominare modulo Go e import
@@ -48,17 +48,17 @@ dal binario. Non modificare alcuna logica.
 
 **Criteri di accettazione:**
 
-- [ ] `go list -m` restituisce `github.com/zanza00/skp`.
-- [ ] Nessun import o riferimento di compilazione usa il vecchio modulo.
-- [ ] Il codice compila e tutti i test esistenti passano senza cambiamenti ai
+- [x] `go list -m` restituisce `github.com/zanza00/skp`.
+- [x] Nessun import o riferimento di compilazione usa il vecchio modulo.
+- [x] Il codice compila e tutti i test esistenti passano senza cambiamenti ai
   comportamenti attesi, tranne i soli riferimenti al modulo quando necessari.
 
 **Verifica:**
 
-- [ ] `go test -race ./...`
-- [ ] `go vet ./...`
-- [ ] `go build ./cmd/skills-stack`
-- [ ] `rg 'codefloe\.com/zanza00/skills-stack' go.mod cmd internal` senza risultati.
+- [x] `go test -race ./...`
+- [x] `go vet ./...`
+- [x] `go build ./cmd/skills-stack`
+- [x] `rg 'codefloe\.com/zanza00/skills-stack' go.mod cmd internal` senza risultati.
 
 **Dipendenze:** Task 1.
 
