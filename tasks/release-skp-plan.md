@@ -16,8 +16,7 @@ La checklist operativa con criteri di accettazione e dipendenze è in
 
 Al 5 novembre 2026:
 
-- il remote principale locale è `git@codefloe.com:zanza00/skills-stack.git` e
-  non esiste ancora una configurazione GitHub Actions;
+- non esiste ancora una configurazione GitHub Actions;
 - l'account GitHub autenticato è `zanza00` e `zanza00/skp` non esiste;
 - `zanza00/homebrew-tap` esiste già, è pubblico e contiene altre formule;
 - `skp` non risulta presente in Homebrew Core tramite le API ufficiali di
@@ -32,8 +31,8 @@ Al 5 novembre 2026:
 - **Nome unico:** progetto, repository, binario e formula si chiamano `skp`.
 - **Modulo Go:** `github.com/zanza00/skp`; l'entry point diventa `cmd/skp/`.
 - **GitHub primario:** `https://github.com/zanza00/skp`, pubblico, con `main`
-  come branch predefinito. Dopo la migrazione, GitHub è `origin`; il remote
-  Codefloe resta disponibile come `codefloe`, senza riscrivere la cronologia.
+  come branch predefinito. Dopo la migrazione, GitHub è `origin`, senza
+  riscrivere la cronologia.
 - **Homebrew:** riusare `zanza00/homebrew-tap` e pubblicare
   `Formula/skp.rb`. L'installazione prevista è:
 
@@ -103,8 +102,7 @@ sequenziale.
 
 - [ ] `zanza00/skp` mostra codice, licenza e documentazione corretti.
 - [ ] La CI obbligatoria è verde su tutte le piattaforme previste.
-- [ ] `origin` punta a GitHub, `codefloe` conserva il remote precedente e non è
-  stato eseguito alcun force push.
+- [ ] `origin` punta a GitHub e non è stato eseguito alcun force push.
 
 ### Fase 3 — Release e installazione
 
@@ -143,12 +141,6 @@ stati distribuiti, con una release patch successiva.
 | La formula usa URL o checksum incoerenti | Alto | Test unitari del renderer, snapshot, verifica SHA-256 e installazione reale sulle tre piattaforme |
 | Il workflow del tap rompe le formule esistenti | Medio | Modifica isolata a `skp`, esecuzione dei test del tap e controllo dei diff prima della release |
 | Un tag pubblicato contiene un errore | Alto | Validazione di tag e ancestry, CI prima di publish, release immutabile e fix forward con SemVer |
-| La migrazione interrompe il flusso Codefloe esistente | Basso | Conservare il remote `codefloe`; decidere separatamente una futura dismissione o sincronizzazione |
-
-## Questioni aperte
-
-- **Codefloe:** decidere in seguito se resterà mirror, remote di sola lettura o
-  verrà dismesso; non è un prerequisito della prima release.
 
 Non sono previste altre estensioni funzionali. TUI, Cobra/Viper, completion,
 composizione degli stack, Windows e pubblicazione in Homebrew Core restano fuori

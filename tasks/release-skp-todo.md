@@ -41,10 +41,10 @@ se emergono decisioni diverse.
 
 ## Task 2 — Rinominare modulo Go e import
 
-**Descrizione:** sostituire in modo meccanico
-`codefloe.com/zanza00/skills-stack` con `github.com/zanza00/skp` nel modulo e in
-tutti gli import, lasciando temporaneamente invariati entry point e nome stampato
-dal binario. Non modificare alcuna logica.
+**Descrizione:** sostituire in modo meccanico il modulo precedente con
+`github.com/zanza00/skp` nel modulo e in tutti gli import, lasciando
+temporaneamente invariati entry point e nome stampato dal binario. Non modificare
+alcuna logica.
 
 **Criteri di accettazione:**
 
@@ -58,7 +58,7 @@ dal binario. Non modificare alcuna logica.
 - [x] `go test -race ./...`
 - [x] `go vet ./...`
 - [x] `go build ./cmd/skills-stack`
-- [x] `rg 'codefloe\.com/zanza00/skills-stack' go.mod cmd internal` senza risultati.
+- [x] Nessun riferimento al modulo precedente in `go.mod`, `cmd` e `internal`.
 
 **Dipendenze:** Task 1.
 
@@ -159,18 +159,18 @@ versione minima Go senza aggiungere servizi o dipendenze al binario.
 
 **Criteri di accettazione:**
 
-- [ ] Linux, macOS ARM64 e macOS Intel eseguono `go test -race ./...`,
+- [x] Linux, macOS ARM64 e macOS Intel eseguono `go test -race ./...`,
   `go vet ./...` e `go build ./cmd/skp` usando la versione Go dichiarata in
   `go.mod`.
-- [ ] Il workflow supporta `push`, `pull_request` e `workflow_call`, con permessi
+- [x] Il workflow supporta `push`, `pull_request` e `workflow_call`, con permessi
   `contents: read`, timeout e azioni fissate tramite SHA.
-- [ ] La release può richiamare lo stesso workflow, evitando una seconda definizione
+- [x] La release può richiamare lo stesso workflow, evitando una seconda definizione
   dei controlli.
 
 **Verifica:**
 
-- [ ] Validare YAML e workflow localmente con gli strumenti disponibili.
-- [ ] Dopo il push del Task 6, tutti i job GitHub Actions risultano verdi sulle tre
+- [x] Validare YAML e workflow localmente con gli strumenti disponibili.
+- [x] Dopo il push del Task 6, tutti i job GitHub Actions risultano verdi sulle tre
   piattaforme.
 
 **Dipendenze:** Task 4; l'esecuzione remota dipende dal Task 6.
@@ -185,25 +185,25 @@ versione minima Go senza aggiungere servizi o dipendenze al binario.
 
 **Descrizione:** creare `zanza00/skp` pubblico senza inizializzarlo con una storia
 indipendente, pubblicare la cronologia esistente e rendere GitHub il remote
-primario conservando Codefloe come remote secondario.
+primario.
 
 **Criteri di accettazione:**
 
-- [ ] GitHub contiene la cronologia di `main`, il file di licenza, la CI e la
+- [x] GitHub contiene la cronologia di `main`, il file di licenza, la CI e la
   documentazione rinominata; non vengono pubblicati `bin/`, `dist/` o artefatti
   locali.
-- [ ] `origin` punta a `git@github.com:zanza00/skp.git`, `codefloe` al vecchio
-  remote e il branch locale segue `origin/main`.
-- [ ] Non sono eseguiti force push, rewrite o commit automatici dalla CLI.
-- [ ] Descrizione, visibilità, branch predefinito e homepage del repository sono
+- [x] `origin` punta a `git@github.com:zanza00/skp.git` e il branch locale segue
+  `origin/main`.
+- [x] Non sono eseguiti force push, rewrite o commit automatici dalla CLI.
+- [x] Descrizione, visibilità, branch predefinito e homepage del repository sono
   coerenti; i check del Task 5 sono verdi.
 
 **Verifica:**
 
-- [ ] `git remote -v`, `git status --short --branch` e `git ls-remote origin main`.
-- [ ] `gh repo view zanza00/skp` e verifica dei check tramite `gh run list` /
+- [x] `git remote -v`, `git status --short --branch` e `git ls-remote origin main`.
+- [x] `gh repo view zanza00/skp` e verifica dei check tramite `gh run list` /
   `gh run watch`.
-- [ ] Clone fresco in una directory temporanea, seguito da `go test -race ./...` e
+- [x] Clone fresco in una directory temporanea, seguito da `go test -race ./...` e
   `go build ./cmd/skp`.
 
 **Dipendenze:** Task 4 e definizione locale del Task 5.
@@ -215,8 +215,8 @@ esecuzione del workflow `.github/workflows/checks.yml`.
 
 ### Checkpoint GitHub
 
-- [ ] Repository pubblico leggibile e clone fresco funzionante.
-- [ ] CI verde prima di configurare credenziali o automazioni di release.
+- [x] Repository pubblico leggibile e clone fresco funzionante.
+- [x] CI verde prima di configurare credenziali o automazioni di release.
 
 ## Task 7 — Configurare release e Homebrew tap
 

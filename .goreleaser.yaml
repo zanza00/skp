@@ -1,0 +1,31 @@
+version: 2
+
+project_name: skp
+
+builds:
+  - id: skp
+    main: ./cmd/skp
+    binary: skp
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w
+
+archives:
+  - formats: [tar.gz]
+
+checksum:
+  name_template: checksums.txt
+
+publishers:
+  - name: homebrew-tap
+    checksum: true
+    # The script publishes once for checksums.txt and ignores other artifacts.
+    cmd: python3 scripts/publish-homebrew.py --tag {{ .Tag }} --artifact {{ .ArtifactPath }}
+    env:
+      - GH_TOKEN={{ .Env.HOMEBREW_TAP_TOKEN }}
+
+changelog:
+  sort: asc

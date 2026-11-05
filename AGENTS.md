@@ -144,6 +144,22 @@ Commit `skill-stacks/` and its lock file; never commit the live link.
 - Do not create commits, change Git history or edit `.gitignore` automatically
   from the CLI.
 
+## Release automation
+
+- `.github/workflows/checks.yml` runs Go tests on Linux, macOS ARM64 and macOS
+  Intel and the Homebrew publisher unit tests on Linux. Pin Actions by full SHA.
+- `.goreleaser.yaml` builds Linux/macOS AMD64 and ARM64 archives and checksums.
+  `.github/workflows/release.yml` accepts only stable `vX.Y.Z` tags on `main`,
+  reruns checks and publishes GitHub Releases and the Homebrew formula.
+- `scripts/publish-homebrew.py` updates `Formula/skp.rb` in
+  `zanza00/homebrew-tap` through `HOMEBREW_TAP_TOKEN`; test it with
+  `python3 -m unittest scripts/publish_homebrew_test.py`. Python and `gh` are
+  release-only tools, not runtime dependencies. Do not use GoReleaser's
+  deprecated `brews` section.
+- Run `goreleaser check` and a snapshot from a clean checkout before tagging.
+  Never reuse a published tag; fix forward with a new patch release. Keep
+  `dist/` and all credentials out of commits.
+
 ## Session workflow
 
 Use two or three skills per session, not all of them. The default order for

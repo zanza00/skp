@@ -1,0 +1,86 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Validate version and main ancestry
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          git merge-base --is-ancestor HEAD origin/main
+
+  checks:
+    needs: validate
+    uses: ./.github/workflows/checks.yml
+
+  publish:
+    needs: [validate, checks]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+      - name: Require Homebrew tap credentials
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          if [ -z "$HOMEBREW_TAP_TOKEN" ]; then
+            echo 'Configure the HOMEBREW_TAP_TOKEN Actions secret before releasing.' >&2
+            exit 1
+          fi
+      - name: Publish release
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7
+        with:
+          version: 'v2.18.3'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+      - name: Verify published release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$RELEASE_TAG" --json isDraft,isPrerelease,assets \
+            --jq '(.isDraft == false) and (.isPrerelease == false) and (.assets | length == 5) and any(.assets[]; .name == "checksums.txt")' \
+            | grep -qx true
+      - name: Verify published formula
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          formula="${RUNNER_TEMP}/skp.rb"
+          gh api repos/zanza00/homebrew-tap/contents/Formula/skp.rb \
+            --jq '.content' | base64 -d >"$formula"
+          grep -q "version \"${RELEASE_TAG#v}\"" "$formula"
+          for target in darwin_amd64 darwin_arm64 linux_amd64 linux_arm64; do
+            grep -q "skp_${RELEASE_TAG#v}_${target}.tar.gz" "$formula"
+          done

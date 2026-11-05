@@ -213,10 +213,13 @@ task build        # bin/skp
 task install      # ~/.local/bin/skp
 go test -race ./...
 go vet ./...
+python3 -m unittest scripts/publish_homebrew_test.py
+goreleaser check
 ```
 
 I test di integrazione creano repository Git temporanei e verificano anche i
-casi di sicurezza con file sentinella; non eseguono `npx skills`.
+casi di sicurezza con file sentinella; non eseguono `npx skills`. Python e
+GoReleaser servono soltanto per l'automazione della pubblicazione.
 
 ## Roadmap
 
