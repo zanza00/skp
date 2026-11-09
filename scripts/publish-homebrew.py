@@ -42,9 +42,11 @@ def render(tag, checksums):
                 f'      sha256 "{hashes[name]}"',
                 "    end",
             ])
+        if platform == "linux":
+            lines.extend(["", '    depends_on "git"'])
         lines.append("  end")
     lines.extend([
-        "", '  depends_on "git"', "",
+        "",
         "  def install", '    bin.install "skp"', "  end", "",
         "  test do",
         '    assert_equal "skp", shell_output("#{bin}/skp --version").lines.first.strip',

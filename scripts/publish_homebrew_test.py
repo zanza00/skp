@@ -45,6 +45,13 @@ class PublisherTest(unittest.TestCase):
         for name, digest in self.entries.items():
             self.assertIn(f'/{name}"\n      sha256 "{digest}"', formula)
 
+    def test_git_dependency_is_linux_only(self):
+        formula = publisher.render("v1.2.3", self.checksums)
+        before_linux, linux_and_after = formula.split("  on_linux do\n", 1)
+        linux_block = linux_and_after.split("\n  end\n", 1)[0]
+        self.assertNotIn('depends_on "git"', before_linux)
+        self.assertIn('    depends_on "git"', linux_block)
+
     def test_invalid_inputs_fail_before_publication(self):
         for tag in ("v1.2.3-rc1", "1.2.3", 'v1.2.3"'):
             with self.subTest(tag=tag), self.assertRaises(ValueError):
