@@ -42,7 +42,9 @@ Al 5 novembre 2026:
 
   Non usare la sezione `brews` di GoReleaser, deprecata da v2.10: adattare invece
   il publisher con test già adottato da `source-fetch`, mantenendo la formula per
-  binari precompilati e la dipendenza runtime da `git`.
+  binari precompilati. La formula dichiara `git` su Linux e usa il Git di sistema
+  su macOS, evitando build da sorgente su macOS Intel non più supportato da
+  Homebrew.
 - **Release:** Semantic Versioning, prima release stabile `v0.1.0`, archivi per
   Linux e macOS su `amd64` e `arm64`, checksum SHA-256 e note generate da
   GoReleaser. Windows resta fuori dal perimetro.
@@ -79,47 +81,47 @@ sequenziale.
 
 ### Fase 1 — Identità e rinomina
 
-- [ ] Task 1: confermare contratto di pubblicazione, disponibilità e licenza.
-- [ ] Task 2: rinominare modulo Go e import.
-- [ ] Task 3: rinominare entry point, binario, diagnostiche e test.
-- [ ] Task 4: allineare README, specifica, istruzioni e licenza.
+- [x] Task 1: confermare contratto di pubblicazione, disponibilità e licenza.
+- [x] Task 2: rinominare modulo Go e import.
+- [x] Task 3: rinominare entry point, binario, diagnostiche e test.
+- [x] Task 4: allineare README, specifica, istruzioni e licenza.
 
 **Checkpoint — nessuna regressione funzionale**
 
-- [ ] `go test -race ./...`, `go vet ./...` e `task build` sono verdi.
-- [ ] `task build` produce `bin/skp`; aiuto e `--version` riportano `skp`.
-- [ ] I test esistenti dimostrano che comandi, exit code, symlink e sicurezza non
+- [x] `go test -race ./...`, `go vet ./...` e `task build` sono verdi.
+- [x] `task build` produce `bin/skp`; aiuto e `--version` riportano `skp`.
+- [x] I test esistenti dimostrano che comandi, exit code, symlink e sicurezza non
   sono cambiati.
-- [ ] Il vecchio nome resta solo nei documenti storici o nelle note di migrazione
+- [x] Il vecchio nome resta solo nei documenti storici o nelle note di migrazione
   esplicitamente escluse dalla ricerca.
 
 ### Fase 2 — Presenza GitHub e qualità automatica
 
-- [ ] Task 5: aggiungere CI Linux/macOS e controlli riutilizzabili dalla release.
-- [ ] Task 6: pubblicare la cronologia su GitHub e impostare i remote.
+- [x] Task 5: aggiungere CI Linux/macOS e controlli riutilizzabili dalla release.
+- [x] Task 6: pubblicare la cronologia su GitHub e impostare i remote.
 
 **Checkpoint — repository pubblico verificato**
 
-- [ ] `zanza00/skp` mostra codice, licenza e documentazione corretti.
-- [ ] La CI obbligatoria è verde su tutte le piattaforme previste.
-- [ ] `origin` punta a GitHub e non è stato eseguito alcun force push.
+- [x] `zanza00/skp` mostra codice, licenza e documentazione corretti.
+- [x] La CI obbligatoria è verde su tutte le piattaforme previste.
+- [x] `origin` punta a GitHub e non è stato eseguito alcun force push.
 
 ### Fase 3 — Release e installazione
 
-- [ ] Task 7: configurare GoReleaser, publisher del tap, workflow e test.
-- [ ] Task 8: pubblicare `v0.1.0` e validare il percorso utente completo.
+- [x] Task 7: configurare GoReleaser, publisher del tap, workflow e test.
+- [x] Task 8: pubblicare `v0.1.0` e validare il percorso utente completo.
 
 **Checkpoint — pubblicazione completata**
 
-- [ ] La release contiene i quattro archivi e `checksums.txt`, con checksum
+- [x] La release contiene i quattro archivi e `checksums.txt`, con checksum
   verificati.
-- [ ] Il tap aggiorna `Formula/skp.rb`, README e test di installazione senza
+- [x] Il tap aggiorna `Formula/skp.rb`, README e test di installazione senza
   modificare le altre formule.
-- [ ] Su Linux, macOS ARM64 e macOS Intel, `brew install zanza00/tap/skp`,
+- [x] Su Linux, macOS ARM64 e macOS Intel, `brew install zanza00/tap/skp`,
   `brew test zanza00/tap/skp`, `skp --help` e `skp --version` funzionano.
-- [ ] `go install github.com/zanza00/skp/cmd/skp@v0.1.0` produce un binario
+- [x] `go install github.com/zanza00/skp/cmd/skp@v0.1.0` produce un binario
   funzionante.
-- [ ] README e release notes riportano istruzioni effettivamente verificate.
+- [x] README e release notes riportano istruzioni effettivamente verificate.
 
 ## Verifica trasversale
 

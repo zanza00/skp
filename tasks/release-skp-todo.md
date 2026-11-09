@@ -227,29 +227,29 @@ avviene in questo task.
 
 **Criteri di accettazione:**
 
-- [ ] GoReleaser costruisce `skp` per Linux/macOS `amd64` e `arm64`, produce
+- [x] GoReleaser costruisce `skp` per Linux/macOS `amd64` e `arm64`, produce
   archivi `.tar.gz`, `checksums.txt` e conserva i metadati VCS di `--version`.
-- [ ] Il renderer produce `Formula/skp.rb` con URL, versione, quattro SHA-256,
+- [x] Il renderer produce `Formula/skp.rb` con URL, versione, quattro SHA-256,
   licenza e dipendenza `git`; rifiuta tag non stabili, checksum mancanti,
   duplicati o non validi.
-- [ ] Il workflow accetta solo tag `vX.Y.Z` appartenenti a `main`, esegue i check,
+- [x] Il workflow accetta solo tag `vX.Y.Z` appartenenti a `main`, esegue i check,
   richiede `HOMEBREW_TAP_TOKEN`, pubblica con permessi minimi e verifica gli
   artefatti. `GITHUB_TOKEN` non viene usato per scrivere nel tap.
-- [ ] `dist/` è ignorato; azioni fissate tramite SHA e nessun segreto compare in
+- [x] `dist/` è ignorato; azioni fissate tramite SHA e nessun segreto compare in
   configurazione o output.
-- [ ] Nel tap, README e workflow includono `skp` senza cambiare il contenuto delle
+- [x] Nel tap, README e workflow includono `skp` senza cambiare il contenuto delle
   altre formule; i test coprono Linux, macOS ARM64 e macOS Intel.
 
 **Verifica:**
 
-- [ ] `python3 -m unittest scripts/publish_homebrew_test.py`
-- [ ] `goreleaser check`
-- [ ] `goreleaser release --snapshot --clean` con working tree pulito.
-- [ ] Estrarre gli archivi snapshot, verificare i checksum ed eseguire
+- [x] `python3 -m unittest scripts/publish_homebrew_test.py`
+- [x] `goreleaser check`
+- [x] `goreleaser release --snapshot --clean` con working tree pulito.
+- [x] Estrarre gli archivi snapshot, verificare i checksum ed eseguire
   `skp --help` e `skp --version` sul target disponibile.
-- [ ] Generare la formula con il publisher in `--dry-run`, ispezionarla e validarne
+- [x] Generare la formula con il publisher in `--dry-run`, ispezionarla e validarne
   sintassi/audit senza caricarla nel tap.
-- [ ] Validare i workflow e rivedere il diff del tap prima del primo tag.
+- [x] Validare i workflow e rivedere il diff del tap prima del primo tag.
 
 **Dipendenze:** Task 6.
 
@@ -272,9 +272,9 @@ la formula non viene scritta a mano né pubblicata in questa fase.
 
 ### Checkpoint pre-release
 
-- [ ] Snapshot e test del publisher completamente verdi.
-- [ ] Secret del tap configurato con scope minimo e workflow rivisto.
-- [ ] Approvazione umana esplicita prima di creare e pubblicare il primo tag.
+- [x] Snapshot e test del publisher completamente verdi.
+- [x] Secret del tap configurato con scope minimo e workflow rivisto.
+- [x] Approvazione umana esplicita prima di creare e pubblicare il primo tag.
 
 ## Task 8 — Pubblicare e validare `v0.1.0`
 
@@ -285,28 +285,28 @@ pubblici.
 
 **Criteri di accettazione:**
 
-- [ ] Il tag `v0.1.0` punta al commit approvato e la release non è draft né
+- [x] Il tag `v0.1.0` punta al commit approvato e la release non è draft né
   prerelease.
-- [ ] Sono presenti quattro archivi e `checksums.txt`; i checksum scaricati da
+- [x] Sono presenti quattro archivi e `checksums.txt`; i checksum scaricati da
   GitHub Releases coincidono con quelli della formula.
-- [ ] `Formula/skp.rb` viene aggiornato da un commit di automazione nel tap e i
+- [x] `Formula/skp.rb` viene aggiornato da un commit di automazione nel tap e i
   test del tap passano senza regressioni sulle altre formule.
-- [ ] Installazioni pulite su Linux, macOS ARM64 e macOS Intel eseguono
+- [x] Installazioni pulite su Linux, macOS ARM64 e macOS Intel eseguono
   correttamente `brew install zanza00/tap/skp`,
   `brew test zanza00/tap/skp`, `skp --help` e `skp --version`.
-- [ ] `go install github.com/zanza00/skp/cmd/skp@v0.1.0` funziona da una directory
+- [x] `go install github.com/zanza00/skp/cmd/skp@v0.1.0` funziona da una directory
   temporanea e il binario installato risponde correttamente.
-- [ ] README, release e tap riportano gli stessi comandi verificati; il checklist e
+- [x] README, release e tap riportano gli stessi comandi verificati; il checklist e
   eventuali note di rilascio vengono chiusi con i riferimenti alla release.
 
 **Verifica:**
 
-- [ ] `gh release view v0.1.0` e `gh run watch` per release e tap.
-- [ ] Download degli artefatti e controllo SHA-256 su ogni runner prima di
+- [x] `gh release view v0.1.0` e `gh run watch` per release e tap.
+- [x] Download degli artefatti e controllo SHA-256 su ogni runner prima di
   `brew install`.
-- [ ] Smoke test funzionale in un repository Git temporaneo: `skp list`,
+- [x] Smoke test funzionale in un repository Git temporaneo: `skp list`,
   `skp current`, `skp status` e `skp use` mantengono il contratto.
-- [ ] `git status --short --branch` pulito nel repository principale e assenza di
+- [x] `git status --short --branch` pulito nel repository principale e assenza di
   modifiche non previste nel tap.
 
 **Dipendenze:** Task 7 e approvazione del tag.
@@ -320,7 +320,22 @@ pubblici.
 
 ## Checkpoint finale
 
-- [ ] `https://github.com/zanza00/skp` e la release `v0.1.0` sono pubblici.
-- [ ] Homebrew e `go install` forniscono lo stesso binario funzionante.
-- [ ] Tutti i criteri precedenti sono completi; nessun elemento fuori perimetro è
+- [x] `https://github.com/zanza00/skp` e la release `v0.1.0` sono pubblici.
+- [x] Homebrew e `go install` forniscono lo stesso binario funzionante.
+- [x] Tutti i criteri precedenti sono completi; nessun elemento fuori perimetro è
   stato aggiunto.
+
+## Esito — 9 novembre 2026
+
+- Release: <https://github.com/zanza00/skp/releases/tag/v0.1.0> (`bc34d58`).
+- Formula iniziale: `zanza00/homebrew-tap@71f9f73`, generata dal workflow di
+  release `42190115826`.
+- Correzione packaging: `f3556ab` limita la dipendenza Homebrew da Git a Linux;
+  `zanza00/homebrew-tap@ab0d8e8` aggiorna la formula senza cambiare tag o
+  artefatti `v0.1.0`.
+- Installazioni Homebrew verificate dal run `42538303113` su Linux, macOS ARM64
+  e macOS Intel; controlli principali verdi nel run `42538199590`.
+- `go install github.com/zanza00/skp/cmd/skp@v0.1.0` e smoke test dei comandi
+  verificati in directory temporanee isolate.
+- I precedenti `tasks/init-plan.md`, `tasks/plan.md` e `tasks/todo.md` restano
+  artefatti storici non tracciati e invariati.
